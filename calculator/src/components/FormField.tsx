@@ -1,39 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import styled from 'styled-components'
 
-function FormField() {
-    // State variables for each form field
-    const [firstName, setFirstName] = useState('');
+const StyledInput = styled.input`
+    border-radius: 10px;
+    height: 60px;
+    width: 100%;
+    border-color: #c3b5b5;
+    border-style: solid;
+    border-width: 1px;
+    margin-top: 3px;
+    padding-left: 15px;
+`;
 
-    // Handler for form submission
-    const handleSubmit = (event: any) => {
-        event.preventDefault(); // Prevent the default form submission
-        const formData = { firstName };
-        // Handle form submission logic here
-        console.log(formData);
-        alert(JSON.stringify(formData, null, 2));
-    };
 
-    // Handlers for input changes
-    const handleFirstNameChange = (event:any) => {
-        setFirstName(event.target.value);
-    };
+const StyledLabel = styled.label`
+    
+`;
 
+const StyledDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    height: 70px;
+    width: 100%;
+`;
+
+const CustomInput = ({ ...props }) => {
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label>First Name</label>
-                <br/>
-                <input
-                    name="firstName"
-                    type="text"
-                    value={firstName}
-                    onChange={handleFirstNameChange}
-                    placeholder="A"
+        <>
+            <StyledDiv className="input_wrapp">
+                <StyledLabel htmlFor="shorter-edge" className="input_label">{props.label}</StyledLabel>
+                <StyledInput
+                    type={props.type}
+                    placeholder={props.placeholder}
+                    value={props.value}
+                    onChange={props.onChange}
+                    name={props.name}
                 />
-
-            </form>
-        </div>
-    );
+            </StyledDiv>
+        </>
+    )
 }
 
-export default FormField;
+
+export default CustomInput
