@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Configurator from "../../screens/configurator/Configurator";
 
 
 const FormDiv = styled.form`
@@ -68,10 +69,36 @@ const StyledButton = styled.button`
 
 function ChooseList() {
 
+    const [config, setConfig] = useState<JSON>();
+    const [error, setError] = useState<any>(null);
+
     const navigate = useNavigate();
 
+    const fetchConfig = async () => {
+        try {
+            const response:Response = await fetch('http://localhost:4001/config');
+
+            if(!response.ok) {
+                console.log('Error!');
+                throw new Error('Failed to fetch config');
+            }
+
+            const data = await response.json(); // parsing response to JSON
+            console.log(data);
+            setConfig(data);
+
+        } catch (error) {
+            setError(error);
+            console.error(error);
+        }
+    }
+
     const handleClick = () => {
-        navigate('/calculator');
+
+        fetchConfig();
+            // .then(() => navigate('/calculator'))
+
+        // navigate('/calculator');
     }
 
     return (
@@ -90,7 +117,7 @@ function ChooseList() {
                 <StyledInput list={"profiles"} placeholder={"Wybierz z listy"}/>
             </InputWrapper>
             <ButtonWrapper>
-                <StyledButton onClick={handleClick}>DALEJ</StyledButton>
+                <StyledButton type={"button"} onClick={handleClick}>DALEJ</StyledButton>
             </ButtonWrapper>
         </FormDiv>
     );
