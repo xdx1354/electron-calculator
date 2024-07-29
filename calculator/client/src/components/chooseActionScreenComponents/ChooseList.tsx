@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 
 const FormDiv = styled.form`
@@ -48,7 +49,10 @@ const InputWrapper = styled.div`
 `
 
 const ButtonWrapper = styled.div`
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 5%;
     width: 100%;
     height: 20%;
@@ -60,13 +64,16 @@ const StyledButton = styled.button`
     height: 100%;
     background-color: rgba(30, 28, 28, 0.91);
     color: white;
-
-
 `
 
-
-
 function ChooseList() {
+
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate('/calculator');
+    }
+
     return (
         <FormDiv>
             <InputWrapper>
@@ -83,7 +90,7 @@ function ChooseList() {
                 <StyledInput list={"profiles"} placeholder={"Wybierz z listy"}/>
             </InputWrapper>
             <ButtonWrapper>
-                <StyledButton>DALEJ</StyledButton>
+                <StyledButton onClick={handleClick}>DALEJ</StyledButton>
             </ButtonWrapper>
         </FormDiv>
     );
