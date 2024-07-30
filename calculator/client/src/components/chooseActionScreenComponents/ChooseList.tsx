@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Configurator from "../../screens/configurator/Configurator";
@@ -66,13 +66,39 @@ const StyledButton = styled.button`
     background-color: rgba(30, 28, 28, 0.91);
     color: white;
 `
+type FileName = string;
 
 function ChooseList() {
 
     const [config, setConfig] = useState<JSON>();
     const [error, setError] = useState<any>(null);
+    const [configsList, setConfigsList] = useState<FileName[]>([]);
 
     const navigate = useNavigate();
+
+    // on component mount it should download the list of config files stored
+    useEffect(() => {
+        fetchFiles().then(() => console.log("fetching files successful"))
+    }, [])
+
+    const fetchFiles = async () => {
+        try {
+            const response:Response = await fetch('http://localhost:4001/files');
+
+            if(!response.ok) {
+                console.log('Error!');
+                throw new Error('Failed to fetch config');
+            }
+
+            const data = await response.json(); // parsing response to JSON
+            console.log(data);
+            setConfigsList(data.files);
+
+        } catch (error) {
+            setError(error);
+            console.error(error);
+        }
+    }
 
     const fetchConfig = async () => {
         try {
@@ -94,11 +120,7 @@ function ChooseList() {
     }
 
     const handleClick = () => {
-
-        fetchConfig();
-            // .then(() => navigate('/calculator'))
-
-        // navigate('/calculator');
+        fetchConfig().then(() => navigate('/calculator'))
     }
 
     return (
@@ -108,10 +130,12 @@ function ChooseList() {
                     <FormLabel>Wybierz profil do obliczeń</FormLabel>
                 </LabelWrapper>
 
-                <datalist id={"profiles"}>
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
+                <datalist id="profiles">
+                    {configsList.map((file, index) => (
+                        <option key={index} value={file.replace(/\.json$/, "")}>
+                            {file.replace(/\.json$/, "")}
+                        </option>
+                    ))}
                 </datalist>
 
                 <StyledInput list={"profiles"} placeholder={"Wybierz z listy"}/>

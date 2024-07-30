@@ -14,12 +14,6 @@ function App() {
               {/*<Route path="/*" element={<NotFound />} />*/}
           </Routes>
       </Router>
-
-    // <div className="App">
-    //     <Configurator></Configurator>
-    //   {/*<Calculator></Calculator>*/}
-    //
-    // </div>
   );
 }
 

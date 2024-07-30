@@ -24,6 +24,20 @@ app.get('/config', (req, res) => {
     });
 });
 
+// Downloading all the files names
+app.get('/files', (req, res) => {
+    const dirPath = path.join('data'); // path to configuration files directory
+    console.log('PATH:', dirPath);
+    try {
+        const files = fs.readdirSync(dirPath);
+        res.json({files:files});
+        // console.log(res);
+    } catch (err) {
+        res.status(500).json({message: "Unable to read dir", error: err});
+    }
+
+});
+
 // Startowanie serwera
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
