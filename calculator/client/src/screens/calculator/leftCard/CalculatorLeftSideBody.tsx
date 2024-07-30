@@ -1,13 +1,29 @@
 import React from 'react';
 import CalculatorHeader from "../../../components/CalculatorHeader";
 import CustomInput from "../../../components/FormField";
+import styled from "styled-components";
+
+const BodyDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: flex-start;
+    background-color: #FBFBFB;
+    border-radius: 13px;
+    height: 80%;
+    width: 40%;
+    margin: 1% 1.5%; // top-bottom left-right
+    padding: 5%;
+`
+
 
 function CalculatorLeftSideBody() {
     return (
-        <div style={{backgroundColor:'#FBFBFB', borderRadius:13, height: 600, width: 425, marginLeft:25, padding:50, display: 'flex', flexDirection: 'column', justifyContent: 'left', alignItems: 'flex-start'}}>
-            <CalculatorHeader></CalculatorHeader>
+        <BodyDiv>
+            <CalculatorHeader title={"Kalkulator"} />
             <CustomInput type={"number"} placeholder={"wartość"} label={"Krótszy bok"}></CustomInput>
-        </div>
+        </BodyDiv>
+
     );
 }
 

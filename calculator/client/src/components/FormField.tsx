@@ -9,7 +9,7 @@ const StyledInput = styled.input`
     border-style: solid;
     border-width: 1px;
     margin-top: 3px;
-    padding-left: 15px;
+    //padding-left: 15px;
 `;
 
 

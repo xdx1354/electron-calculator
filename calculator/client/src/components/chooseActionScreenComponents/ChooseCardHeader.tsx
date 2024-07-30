@@ -15,8 +15,7 @@ const HeaderDiv = styled.div`
 function ChooseCardHeader() {
     return (
         <HeaderDiv>
-            {/*Customize the size and colour by props!*/}
-            <CalculatorHeader></CalculatorHeader>
+            <CalculatorHeader title={"Konfiguracja"} color={"#ffffff"}/>
         </HeaderDiv>
 
     );

@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Calculator from "../screens/calculator/Calculator";
-import CalculatorHeader from "./CalculatorHeader";
 import ChooseCardHeader from "./chooseActionScreenComponents/ChooseCardHeader";
 import ChooseList from "./chooseActionScreenComponents/ChooseList";
 

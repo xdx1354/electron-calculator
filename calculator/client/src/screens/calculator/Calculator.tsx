@@ -1,6 +1,34 @@
 import React, {useEffect} from 'react';
 import CalculatorLeftSideBody from "./leftCard/CalculatorLeftSideBody";
 import {useLocation} from "react-router-dom";
+import CalculatorRightSideBody from "./rightCard/CalculatorRightSideBody";
+import styled from "styled-components";
+
+const CalculatorCard = styled.div`
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #1E1C1C;
+`;
+
+const CalculatorCardBody = styled.div`
+    display: flex;
+    height: 75vh;
+    width: 60vw;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #413E3E;
+    border-radius: 25px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #1E1C1C;
+    
+    
+`;
 
 function Calculator() {
 
@@ -9,17 +37,16 @@ function Calculator() {
     const { profile } = location.state || {};
 
     useEffect(() => {
-       console.log('PROFILE RECIEVED', profile);
+       console.log('PROFILE RECEIVED', profile);
     }, []);
 
     return (
-        <div className="CalculatorCard" style={{height:"100%", width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", backgroundColor:"#1E1C1C"}}>
-            <div className="CalculatorCardBody" style={{height:750, width:1050, display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", backgroundColor:"#413E3E", marginTop:137, marginBottom:137, marginLeft:195, marginRight:195, borderRadius:25, borderWidth:1, borderColor:"#1E1C1C"}}>
-                {/*<div className="CalculatorBodyLeft" style={{backgroundColor:'#FBFBFB', borderRadius:13, height: 700, width: 525, marginLeft:25, zIndex: 1}}>Calculator LEFT</div>*/}
+
+        <CalculatorCard>
+            <CalculatorCardBody>
                 <CalculatorLeftSideBody></CalculatorLeftSideBody>
-                <div className="CalculatorBodyRight" style={{backgroundColor: "#2F2929", marginRight: 25, height:700, width: 525, borderRadius: 13}}>Calculator Right</div>
-            </div>
-        </div>
+            </CalculatorCardBody>
+        </CalculatorCard>
 
     );
 }
