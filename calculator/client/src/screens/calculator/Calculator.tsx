@@ -1,7 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CalculatorLeftSideBody from "./leftCard/CalculatorLeftSideBody";
+import {useLocation} from "react-router-dom";
 
 function Calculator() {
+
+    // getting profile data form ChooseList
+    const location = useLocation();
+    const { profile } = location.state || {};
+
+    useEffect(() => {
+       console.log('PROFILE RECIEVED', profile);
+    }, []);
+
     return (
         <div className="CalculatorCard" style={{height:"100%", width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", backgroundColor:"#1E1C1C"}}>
             <div className="CalculatorCardBody" style={{height:750, width:1050, display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", backgroundColor:"#413E3E", marginTop:137, marginBottom:137, marginLeft:195, marginRight:195, borderRadius:25, borderWidth:1, borderColor:"#1E1C1C"}}>

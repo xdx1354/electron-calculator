@@ -73,7 +73,7 @@ function ChooseList() {
     const [config, setConfig] = useState<JSON>();
     const [error, setError] = useState<any>(null);
     const [configsList, setConfigsList] = useState<FileName[]>([]);
-
+    const [selectedProfile, setSelectedProfile] = useState<string>("");
     const navigate = useNavigate();
 
     // on component mount it should download the list of config files stored
@@ -100,7 +100,7 @@ function ChooseList() {
         }
     }
 
-    const fetchConfig = async () => {
+    const fetchConfig = async (name:string) => {
         try {
             const response:Response = await fetch('http://localhost:4001/config');
 
@@ -109,25 +109,39 @@ function ChooseList() {
                 throw new Error('Failed to fetch config');
             }
 
-            const data = await response.json(); // parsing response to JSON
+            const data : JSON = await response.json(); // parsing response to JSON
             console.log(data);
             setConfig(data);
+
+            return data;
 
         } catch (error) {
             setError(error);
             console.error(error);
+            throw error;
         }
     }
 
-    const handleClick = () => {
-        fetchConfig().then(() => navigate('/calculator'))
+    const handleClick = async () => {
+        try {
+            const fetchedConfig = await fetchConfig(selectedProfile + '.json');
+            console.log('CONFIG:', fetchedConfig); // Should log the updated config
+
+            navigate('/calculator', { state: { profile: fetchedConfig } });
+        } catch (error) {
+            console.error('Error navigating:', error);
+        }
     }
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedProfile(event.target.value);
+    };
 
     return (
         <FormDiv>
             <InputWrapper>
                 <LabelWrapper>
-                    <FormLabel>Wybierz profil do obliczeń</FormLabel>
+                    <FormLabel>Wybierz typ naklejek:</FormLabel>
                 </LabelWrapper>
 
                 <datalist id="profiles">
