@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "concurrently \"npm run client\" \"npm run server\"",
+    "start": "concurrently \"npm run client\" ",
     "server": "cd server && node server.js",
     "client": "cd client && npm start",
     "electron": "concurrently \"wait-on http://localhost:3000 && electron .\" \"npm run start\"",

@@ -16,7 +16,7 @@ app.use(cors(corsOptions));
 app.get('/config/:filename', (req, res) => {
 
     const filename = req.params.filename;
-    const configPath = path.join('data', filename);
+    const configPath = path.join('server','data', filename);
 
     fs.readFile(configPath, 'utf8', (err, data) => {
         if (err) {
@@ -29,7 +29,7 @@ app.get('/config/:filename', (req, res) => {
 
 // Downloading all the files names
 app.get('/files', (req, res) => {
-    const dirPath = path.join('data'); // path to configuration files directory
+    const dirPath = path.join('server','data'); // path to configuration files directory
     console.log('PATH:', dirPath);
     try {
         const files = fs.readdirSync(dirPath);
@@ -45,3 +45,15 @@ app.get('/files', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+
+// Obsługa zamykania serwera
+const shutdown = () => {
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+};
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);

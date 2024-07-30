@@ -1,11 +1,12 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 
-// Uruchom serwer Express jako osobny proces
+let serverProcess;
+
 function startExpressServer() {
     const serverPath = path.join('server', 'server.js');
-    exec(`node ${serverPath}`, (error, stdout, stderr) => {
+    serverProcess = exec(`node ${serverPath}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error starting server: ${error.message}`);
             return;
@@ -26,11 +27,31 @@ function createWindow () {
             nodeIntegration: true,
             contextIsolation: false
         }
-    })
+    });
 
-    win.loadURL('http://localhost:3000')
+    win.loadURL('http://localhost:3000');
 }
 
-// startExpressServer();   // start serwera Express
+app.whenReady().then(() => {
+    startExpressServer();
+    createWindow();
+});
 
-app.whenReady().then(createWindow)
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+app.on('before-quit', () => {
+    if (serverProcess) {
+        serverProcess.kill('SIGTERM'); // Zamyka serwer Express
+        console.log('Server process killed');
+    }
+});
+
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
+});
