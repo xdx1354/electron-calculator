@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Configurator from "../../screens/configurator/Configurator";
 
 
 const FormDiv = styled.form`
@@ -70,7 +69,6 @@ type FileName = string;
 
 function ChooseList() {
 
-    const [config, setConfig] = useState<JSON>();
     const [error, setError] = useState<any>(null);
     const [configsList, setConfigsList] = useState<FileName[]>([]);
     const [selectedProfile, setSelectedProfile] = useState<string>("");
@@ -102,7 +100,7 @@ function ChooseList() {
 
     const fetchConfig = async (name:string) => {
         try {
-            const response:Response = await fetch('http://localhost:4001/config');
+            const response:Response = await fetch('http://localhost:4001/config/' + name);
 
             if(!response.ok) {
                 console.log('Error!');
@@ -111,7 +109,6 @@ function ChooseList() {
 
             const data : JSON = await response.json(); // parsing response to JSON
             console.log(data);
-            setConfig(data);
 
             return data;
 
@@ -124,6 +121,7 @@ function ChooseList() {
 
     const handleClick = async () => {
         try {
+            console.log('Selected profile:', selectedProfile);
             const fetchedConfig = await fetchConfig(selectedProfile + '.json');
             console.log('CONFIG:', fetchedConfig); // Should log the updated config
 
@@ -152,7 +150,7 @@ function ChooseList() {
                     ))}
                 </datalist>
 
-                <StyledInput list={"profiles"} placeholder={"Wybierz z listy"}/>
+                <StyledInput list={"profiles"} placeholder={"Wybierz z listy"} onChange={handleInputChange}/>
             </InputWrapper>
             <ButtonWrapper>
                 <StyledButton type={"button"} onClick={handleClick}>DALEJ</StyledButton>

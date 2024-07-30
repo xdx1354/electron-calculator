@@ -13,8 +13,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Serwowanie pliku konfiguracyjnego JSON
-app.get('/config', (req, res) => {
-    const configPath = path.join('data', 'config1.json');
+app.get('/config/:filename', (req, res) => {
+
+    const filename = req.params.filename;
+    const configPath = path.join('data', filename);
+
     fs.readFile(configPath, 'utf8', (err, data) => {
         if (err) {
             res.status(500).send('Error reading config file');
