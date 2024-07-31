@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import CalculatorHeader from "../../../components/CalculatorHeader";
-import CustomInput from "../../../components/FormField";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
 
