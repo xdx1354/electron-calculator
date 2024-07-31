@@ -16,6 +16,8 @@ const BodyDiv = styled.div`
     width: 40%;
     margin: 1% 1.5%; // top-bottom left-right
     padding: 5%;
+    z-index: 2;
+    
 `
 
 const FormWrapper = styled.div`

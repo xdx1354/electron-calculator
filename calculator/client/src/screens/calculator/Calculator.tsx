@@ -26,6 +26,7 @@ const CalculatorCardBody = styled.div`
     border-width: 1px;
     border-style: solid;
     border-color: #1E1C1C;
+    overflow: hidden;
     
     
 `;
@@ -45,6 +46,7 @@ function Calculator() {
         <CalculatorCard>
             <CalculatorCardBody>
                 <CalculatorLeftSideBody profile={profile}></CalculatorLeftSideBody>
+                <CalculatorRightSideBody></CalculatorRightSideBody>
             </CalculatorCardBody>
         </CalculatorCard>
 
