@@ -1,0 +1,42 @@
+{
+  "naklejki na mocnej folii": {
+    "cena_za_1m_od_powierzchni_naklejki": {
+      "4.5": 169.00,
+      "9999": 84.50
+    },
+    "cena_minimalna": 96.00,
+    "koszt_projektu": 24.00,
+    "doplata_za_sztuke": 0.0,
+    "dodatki": {
+      "laminowanie": {
+        "dodatkowo_za_1m": 41,
+        "dodatkowo_do_ceny_minimalnej": 48
+      }
+    },
+    "rabat": {
+      "1": 2,
+      "2": 4,
+      "3": 6,
+      "4": 8,
+      "5": 10,
+      "6": 12,
+      "7": 14,
+      "8": 16,
+      "9": 18,
+      "10": 20,
+      "11": 22,
+      "12": 24,
+      "13": 25,
+      "14": 25,
+      "15": 25
+    },
+    "wymiary": {
+      "max_krotszy_bok": 134.00,
+      "max_dluzszy_bok": 999.00
+    },
+    "marginesy": {
+      "szerokosc": 0.2,
+      "wysokosc": 0.2
+    }
+  }
+}
