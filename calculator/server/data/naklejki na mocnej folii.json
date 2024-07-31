@@ -1,8 +1,17 @@
 {
-  "naklejki na mocnej folii": {
+  "profile": {
+    "type": "naklejki na mocnej folii",
     "cena_za_1m_od_powierzchni_naklejki": {
-      "4.5": 169.00,
-      "9999": 84.50
+      "prog1":{
+        "wieksze_niz" : 0.0,
+        "mniejsze_rowne_niz": 4.5,
+        "cena": 169.00
+      },
+      "prog2":{
+        "wieksze_niz" : 4.5,
+        "mniejsze_rowne_niz": 9999,
+        "cena": 84.50
+      }
     },
     "cena_minimalna": 96.00,
     "koszt_projektu": 24.00,

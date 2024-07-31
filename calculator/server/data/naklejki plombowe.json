@@ -1,14 +1,39 @@
 {
-  "naklejki plombowe": {
+  "profile": {
+    "type": "naklejki plombowe",
     "cena_za_1m_od_powierzchni_naklejki": {
-      "4.5": 169.00,
-      "9999": 84.50
+      "prog1":{
+        "wieksze_niz" : 0.0,
+        "mniejsze_rowne_niz": 4.5,
+        "cena": 169.00
+      },
+      "prog2":{
+        "wieksze_niz" : 4.5,
+        "mniejsze_rowne_niz": 9999,
+        "cena": 84.50
+      }
     },
     "cena_minimalna": 96.00,
     "koszt_projektu": 24.00,
     "doplata_za_sztuke": 0.0,
     "dodatki": {
-      "laminowanie": {
+      "laminowanie_mat": {
+        "dodatkowo_za_1m": 41,
+        "dodatkowo_do_ceny_minimalnej": 48
+      },
+      "laminowanie_blysk": {
+        "dodatkowo_za_1m": 41,
+        "dodatkowo_do_ceny_minimalnej": 48
+      },
+      "laminowanie_UV": {
+        "dodatkowo_za_1m": 41,
+        "dodatkowo_do_ceny_minimalnej": 48
+      },
+      "wycinanie_w_dowolnym_ksztalcie": {
+        "dodatkowo_za_1m": 41,
+        "dodatkowo_do_ceny_minimalnej": 48
+      },
+      "szary_klej_maskujacy": {
         "dodatkowo_za_1m": 41,
         "dodatkowo_do_ceny_minimalnej": 48
       }

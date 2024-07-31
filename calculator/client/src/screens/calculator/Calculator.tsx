@@ -44,7 +44,7 @@ function Calculator() {
 
         <CalculatorCard>
             <CalculatorCardBody>
-                <CalculatorLeftSideBody></CalculatorLeftSideBody>
+                <CalculatorLeftSideBody profile={profile}></CalculatorLeftSideBody>
             </CalculatorCardBody>
         </CalculatorCard>
 
