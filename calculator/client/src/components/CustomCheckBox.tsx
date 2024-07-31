@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
 import styled from 'styled-components'
 
-const StyledInput = styled.input`
+const StyledCheckBox = styled.input`
     border-radius: 10px;
-    height: 60px;
-    width: 100%;
+    height: 21px;
+    width: 20%;
     border-color: #c3b5b5;
     border-style: solid;
     border-width: 1px;
@@ -14,24 +13,24 @@ const StyledInput = styled.input`
 
 
 const StyledLabel = styled.label`
-    
+    width: 30%;
 `;
 
 const StyledDiv = styled.div`
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-start;
-    height: 70px;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: 40px;
     width: 100%;
 `;
 
-const CustomInput = ({ ...props }) => {
+const CustomCheckBox = ({ ...props }) => {
     return (
         <>
-            <StyledDiv className="input_wrapp">
-                <StyledLabel htmlFor="shorter-edge" className="input_label">{props.label}</StyledLabel>
-                <StyledInput
+            <StyledDiv>
+                <StyledLabel htmlFor="shorter-edge" >{props.label}</StyledLabel>
+                <StyledCheckBox
                     type={props.type}
                     placeholder={props.placeholder}
                     value={props.value}
@@ -44,4 +43,4 @@ const CustomInput = ({ ...props }) => {
 }
 
 
-export default CustomInput
+export default CustomCheckBox
