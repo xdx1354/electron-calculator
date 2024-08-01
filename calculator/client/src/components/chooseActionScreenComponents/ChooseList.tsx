@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import {JsonResponse, Profile} from "../../types/types";
 
 
 const FormDiv = styled.form`
@@ -101,15 +102,14 @@ function ChooseList() {
 
     const fetchConfig = async (name:string) => {
         try {
-            const response:Response = await fetch('http://localhost:4001/config/' + name);
+            const response = await fetch('http://localhost:4001/config/' + name);
 
             if(!response.ok) {
                 console.log('Error!');
                 throw new Error('Failed to fetch config');
             }
 
-            const data : JSON = await response.json(); // parsing response to JSON
-            console.log(data);
+            const data : JsonResponse = await response.json(); // parsing response to JSON
 
             return data;
 
@@ -123,10 +123,10 @@ function ChooseList() {
     const handleClick = async () => {
         try {
             console.log('Selected profile:', selectedProfile);
-            const fetchedConfig = await fetchConfig(selectedProfile + '.json');
+            const fetchedConfig= await fetchConfig(selectedProfile + '.json');
             console.log('CONFIG:', fetchedConfig); // Should log the updated config
 
-            navigate('/calculator', { state: { profile: fetchedConfig } });
+            navigate('/calculator', { state: { profile: fetchedConfig.profile } });
         } catch (error) {
             console.error('Error navigating:', error);
         }

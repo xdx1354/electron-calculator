@@ -1,9 +1,12 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import CalculatorHeader from "../../../components/CalculatorHeader";
 import CustomInput from "../../../components/FormField";
 import styled from "styled-components";
 import CustomCheckBox from "../../../components/CustomCheckBox";
 import CustomButton from "../../../components/CustomButton";
+import { Profile } from "../../../types/types";
+import {useLocation} from "react-router-dom";
+import {type} from "node:os";
 
 const BodyDiv = styled.div`
     display: flex;
@@ -17,8 +20,7 @@ const BodyDiv = styled.div`
     margin: 1% 1.5%; // top-bottom left-right
     padding: 5%;
     z-index: 2;
-    
-`
+`;
 
 const FormWrapper = styled.div`
     display: flex;
@@ -27,7 +29,7 @@ const FormWrapper = styled.div`
     align-items: flex-start;
     width: 100%;
     height: 100%;
-`
+`;
 
 const ButtonWrapper = styled.div`
     display: flex;
@@ -36,34 +38,43 @@ const ButtonWrapper = styled.div`
     justify-content: center;
     align-items: center;
     height: 10%;
-`
+`;
 
 interface Props {
-    profile?: JSON;
+    profileProp?: Profile;
 }
 
+const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
+
+    const location = useLocation();
+    const profileProp:Profile = location.state?.profile;
+
+    const [formState, setFormState] = useState<{ [key: string]: any }>({});
+    const [profile, setProfile] = useState<Profile | null>(profileProp ?? null);
 
 
-const CalculatorLeftSideBody: React.FunctionComponent<Props> = ({ profile }) => {
+    useEffect(() => {
+        if (profileProp) {
+            setProfile(profileProp);
+        }
+    }, [profileProp]);
 
-    const temp = () => {
-        console.log('Printing form data:', formState);
-    }
+    useEffect(() => {
+        if (profile) {
 
-    const [formState, setFormState] = useState<{[key: string]: any}>({});
+            const initialState: { [key: string]: any } = {};
 
-    //TODO: after declaring the interface
+            initialState["krotszy_bok"] = 0;
+            initialState["dluzszy_bok"] = 0;
+            initialState["ilosc_szt"] = 0;
 
-    // useEffect(() => {
-    //     if (profile) {
-    //         const initialState: { [key: string]: any } = {};
-    //         // Assuming profile contains an array of fields with ids
-    //         profile.dodatki.forEach((field: any) => {
-    //             initialState[field.id] = field.type === 'checkbox' ? false : '';
-    //         });
-    //         setFormState(initialState);
-    //     }
-    // }, [profile]);
+            profile.dodatki.forEach((field: any) => {
+                initialState[field.typ] = false;
+            });
+
+            setFormState(initialState);
+        }
+    }, [profile]);
 
     const handleChange = (id: string, value: any) => {
         setFormState(prevState => ({
@@ -72,47 +83,52 @@ const CalculatorLeftSideBody: React.FunctionComponent<Props> = ({ profile }) => 
         }));
     }
 
+    const temp = () => {
+        console.log('Printing form data:', formState);
+    }
+
     return (
         <BodyDiv>
-            <CalculatorHeader title={"Kalkulator"}/>
+            <CalculatorHeader title={"Kalkulator"} />
             <FormWrapper>
                 <CustomInput
                     key={"krotszy_bok"}
                     type={"number"}
                     placeholder={"wartość"}
                     label={"Krótszy bok"}
-                    onChange={(e:  React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
                 />
                 <CustomInput
                     key={"dluzszy_bok"}
                     type={"number"}
                     placeholder={"wartość"}
                     label={"Dłuższy bok"}
-                    onChange={(e:  React.ChangeEvent<HTMLInputElement>) => handleChange("dluzszy_bok", parseFloat(e.target.value))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("dluzszy_bok", parseFloat(e.target.value))}
                 />
                 <CustomInput
                     key={"ilosc_szt"}
                     type={"number"}
                     placeholder={"wartość"}
                     label={"Ilość sztuk"}
-                    onChange={(e:  React.ChangeEvent<HTMLInputElement>) => handleChange("ilosc_szt", parseFloat(e.target.value))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("ilosc_szt", parseFloat(e.target.value))}
                 />
-                <CustomCheckBox
-                    key={"czy_laminowanie"}
-                    type={"checkbox"}
-                    placeholder={"wartość"}
-                    label={"Laminowanie"}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("czy_laminowanie", e.target.checked)}
-                />
+                {profile?.dodatki.map((field, index) => (
+                    <CustomCheckBox
+                        key={field.typ}
+                        type="checkbox"
+                        label={field.typ.replace(/_/g, ' ')}
+                        checked={formState[field.typ]}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(field.typ, e.target.checked)}
+                    />
+                ))}
+
+
                 <ButtonWrapper>
-                    <CustomButton text={"OBLICZ"} function={temp}/>
+                    <CustomButton text={"OBLICZ"} function={temp} />
                 </ButtonWrapper>
             </FormWrapper>
         </BodyDiv>
-
     );
 }
 
 export default CalculatorLeftSideBody;
-
-
