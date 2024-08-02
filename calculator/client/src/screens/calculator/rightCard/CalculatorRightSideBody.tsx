@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import CalculatorHeader from "../../../components/CalculatorHeader";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
+import {CalculatorResult} from "../../../types/calcualtorResult";
 
 const StyledBody = styled.div`
     display: flex;
@@ -78,15 +79,17 @@ const ButtonWrapper = styled.div`
     align-items: center;
 `
 
+interface Props {
+    calc: CalculatorResult;
+}
 
+const CalculatorRightSideBody: React.FC<Props> = ({calc}) => {
 
-function CalculatorRightSideBody() {
-
-    const [netto, setNetto] = useState<number>(0);
-    const [brutto, setBrutto] = useState<number>(0);
-    const [minimalNetto, setMinimalNetto] = useState<number>(0);
-    const [minimalBrutto, setMinimalBrutto] = useState<number>(0);
-    const [perItem, setPerItem] = useState<number>(0);
+    // const [netto, setNetto] = useState<number>(calc.cena_netto);
+    // const [brutto, setBrutto] = useState<number>(calc.cena_brutto);
+    // const [minimalNetto, setMinimalNetto] = useState<number>(calc.cena_minimalna_netto);
+    // const [minimalBrutto, setMinimalBrutto] = useState<number>(calc.cena_minimalna_brutto);
+    // const [perItem, setPerItem] = useState<number>(calc.cena_za_szt_netto);
 
     return (
         <StyledBody>
@@ -94,18 +97,18 @@ function CalculatorRightSideBody() {
             <PricingWrapper>
                 <SmallPricingWrapper>
                     <SmallPricing>
-                        <SmallPricingPrimary>{netto}zł netto</SmallPricingPrimary>
-                        <SmallPricingSecondary>(minimalna opłata {minimalNetto}zł)</SmallPricingSecondary>
+                        <SmallPricingPrimary>{calc.cena_netto}zł netto</SmallPricingPrimary>
+                        <SmallPricingSecondary>(minimalna opłata {calc.cena_minimalna_netto}zł)</SmallPricingSecondary>
                     </SmallPricing>
                     <SmallPricing>
-                        <SmallPricingPrimary>{brutto}zł brutto</SmallPricingPrimary>
-                        <SmallPricingSecondary>(minimalna opłata {minimalBrutto}zł)</SmallPricingSecondary>
+                        <SmallPricingPrimary>{calc.cena_brutto}zł brutto</SmallPricingPrimary>
+                        <SmallPricingSecondary>(minimalna opłata {calc.cena_minimalna_brutto}zł)</SmallPricingSecondary>
                     </SmallPricing>
                 </SmallPricingWrapper>
 
                 <PricingPerItemWrapper>
                     <PricingPerItemBig>Cena za 1 sztukę:</PricingPerItemBig>
-                    <PricingPerItemSmall>{perItem}zł</PricingPerItemSmall>
+                    <PricingPerItemSmall>{calc.cena_za_szt_netto}zł</PricingPerItemSmall>
                 </PricingPerItemWrapper>
             </PricingWrapper>
 

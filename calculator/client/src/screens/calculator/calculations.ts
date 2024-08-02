@@ -7,7 +7,6 @@ let jsonProfileObject: Profile;
 // field setter
 const setJSON = (jsonProfile: Profile ) => {
     jsonProfileObject = jsonProfile;
-    console.log("setJSON", jsonProfileObject);
 }
 
 // returns area as square meters instead of centimeters like the given input
@@ -83,6 +82,17 @@ const getMinimalPrice = (formParams: any) => {
     return minimalPrice;
 }
 
+/**
+ * Rounds a number to a specified number of decimal places.
+ * @param num The number to be rounded.
+ * @param decimalPlaces The number of decimal places to round to.
+ * @returns The rounded number.
+ */
+function roundToDecimalPlaces(num: number, decimalPlaces: number): number {
+    const factor = Math.pow(10, decimalPlaces);
+    return Math.round(num * factor) / factor;
+}
+
 const calculatePrice = (formParams: any): CalculatorResult => {
     // area includes the margins as 2x jsonObject.marginesy.szerokosc + 2x jsonObject.marginesy.wysokosc!
     let area: number = getArea(formParams.dluzszy_bok, formParams.krotszy_bok, formParams.ilosc_szt);
@@ -118,11 +128,11 @@ const packIntoJSON = (formParams: any, priceNetto: number, minimalPriceNetto: nu
     return {
         typ: jsonProfileObject.type,
         dodatki: dodatki,
-        cena_netto: priceNetto,
-        cena_brutto: convertToBrutto(priceNetto),
-        cena_minimalna_netto: minimalPriceNetto,
-        cena_minimalna_brutto: convertToBrutto(minimalPriceNetto),
-        cena_za_szt_netto: priceNetto / formParams.ilosc_szt,
+        cena_netto: roundToDecimalPlaces(priceNetto, 2),
+        cena_brutto: roundToDecimalPlaces(convertToBrutto(priceNetto), 2),
+        cena_minimalna_netto: roundToDecimalPlaces(minimalPriceNetto, 2),
+        cena_minimalna_brutto:roundToDecimalPlaces(convertToBrutto(minimalPriceNetto), 2),
+        cena_za_szt_netto: roundToDecimalPlaces(priceNetto / formParams.ilosc_szt, 3),
         ilosc_szt: formParams.ilosc_szt,
         wymiary: {
             krotszy_bok: formParams.krotszy_bok,
@@ -141,4 +151,4 @@ const convertToBrutto = (priceNetto: number): number => {
 
 
 
-export {setJSON, calculatePrice, convertToBrutto};
+export {setJSON, calculatePrice, convertToBrutto, getMinimalPrice};
