@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import CalculatorLeftSideBody from "./leftCard/CalculatorLeftSideBody";
 import {useLocation} from "react-router-dom";
 import CalculatorRightSideBody from "./rightCard/CalculatorRightSideBody";
 import styled from "styled-components";
-import {Profile} from "../../types/types";
+import {CalculatorResult} from "../../types/calcualtorResult";
 
 const CalculatorCard = styled.div`
     height: 100vh;
@@ -38,6 +38,21 @@ function Calculator() {
     const location = useLocation();
     const { profile } = location.state || {};
 
+    const [calculationsResults, setCalculationsResults] = useState<CalculatorResult>({
+        typ: "",
+        dodatki: [],
+        cena_netto: 0,
+        cena_brutto: 0,
+        cena_minimalna_brutto: 0,
+        cena_minimalna_netto: 0,
+        cena_za_szt_netto: 0,
+        ilosc_szt: 0,
+        wymiary: {
+            krotszy_bok: 0,
+            dluzszy_bok: 0
+        }
+    });
+
     useEffect(() => {
        console.log('PROFILE RECEIVED', profile);
     }, []);
@@ -46,8 +61,14 @@ function Calculator() {
 
         <CalculatorCard>
             <CalculatorCardBody>
-                <CalculatorLeftSideBody profileProp={profile}></CalculatorLeftSideBody>
-                <CalculatorRightSideBody></CalculatorRightSideBody>
+                <CalculatorLeftSideBody
+                    profileProp={profile}
+                    calculationsResults={calculationsResults}
+                    setCalculationsResults={setCalculationsResults}
+                />
+                <CalculatorRightSideBody
+                    calc={calculationsResults}
+                />
             </CalculatorCardBody>
         </CalculatorCard>
 

@@ -5,8 +5,8 @@ import styled from "styled-components";
 import CustomCheckBox from "../../../components/CustomCheckBox";
 import CustomButton from "../../../components/CustomButton";
 import { Profile } from "../../../types/types";
-import {useLocation} from "react-router-dom";
-import {calculatePrice, convertToBrutto, setJSON} from "../calculations";
+import {calculatePrice, setJSON} from "../calculations";
+import {CalculatorResult} from "../../../types/calcualtorResult";
 
 const BodyDiv = styled.div`
     display: flex;
@@ -41,40 +41,41 @@ const ButtonWrapper = styled.div`
 `;
 
 interface Props {
-    profileProp?: Profile;
+    profileProp: Profile;
+    calculationsResults: CalculatorResult;
+    setCalculationsResults: React.Dispatch<React.SetStateAction<CalculatorResult>>;
 }
 
-const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
+const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResults, setCalculationsResults}) => {
 
-    const location = useLocation();
-    const profileProp:Profile = location.state?.profile;
+
+    const profile:Profile = profileProp;
 
     const [formState, setFormState] = useState<{ [key: string]: any }>({});
-    const [profile, setProfile] = useState<Profile | null>(profileProp ?? null);
-
 
     useEffect(() => {
-        if (profileProp) {
-            setProfile(profileProp);
-        }
-    }, [profileProp]);
+        setJSON(profile);
 
-    useEffect(() => {
-        if (profile) {
+        const initialState: { [key: string]: any } = {};
 
-            const initialState: { [key: string]: any } = {};
+        initialState["krotszy_bok"] = 0;
+        initialState["dluzszy_bok"] = 0;
+        initialState["ilosc_szt"] = 0;
 
-            initialState["krotszy_bok"] = 0;
-            initialState["dluzszy_bok"] = 0;
-            initialState["ilosc_szt"] = 0;
+        profile.dodatki.forEach((field: any) => {
+            initialState[field.typ] = false;
+        });
 
-            profile.dodatki.forEach((field: any) => {
-                initialState[field.typ] = false;
-            });
+        setFormState(initialState);
 
-            setFormState(initialState);
-        }
     }, [profile]);
+
+    // useState is asynchronous and printing changed data immediately after changing it results in printing old data
+    // using useEffect helps here and prints just after the data is really changed
+    // this function is for testing purposes only
+    useEffect(() => {
+        console.log("Calculation results JSON: ", calculationsResults);
+    }, [calculationsResults]);
 
     const handleChange = (id: string, value: any) => {
         setFormState(prevState => ({
@@ -88,18 +89,17 @@ const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
         if (profile){
             let formParams = Object.fromEntries(Object.entries(formState));
             console.log("Form params as json: ", formParams);
-            setJSON(profile);
             try {
-                let priceNetto = calculatePrice(formParams);
-                let priceBrutto = convertToBrutto(priceNetto);
-
-                console.log("Calculated price Netto: ", priceNetto, " \nAnd price Brutto: ", priceBrutto);
+                const result = calculatePrice(formParams);
+                console.log("Calculation results const: ", result);
+                setCalculationsResults(result);
             } catch (e) {
                 throw e;
             }
         } else {
             throw new Error("No profile found.");
         }
+
     }
 
     return (
@@ -127,7 +127,7 @@ const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
                     label={"Ilość sztuk"}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("ilosc_szt", parseFloat(e.target.value))}
                 />
-                {profile?.dodatki.map((field, index) => (
+                {profile?.dodatki.map((field) => (
                     <CustomCheckBox
                         key={field.typ}
                         type="checkbox"
