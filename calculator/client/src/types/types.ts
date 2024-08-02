@@ -1,13 +1,9 @@
 // Interface for individual price per 1m
-interface CenaZa1m {
+interface PriceThreshold {
+    id: number
     wieksze_niz: number;
     mniejsze_rowne_niz: number;
     cena: number;
-}
-
-// Interface for the price thresholds
-interface PriceThresholds {
-    [key: string]: CenaZa1m;
 }
 
 // Interface for individual extra feature
@@ -18,8 +14,9 @@ interface Dodatek {
 }
 
 // Interface for discount
-interface Rabat {
-    [key: number]: number; // Keys are numbers, values are also numbers
+interface RabatValue {
+    wieksze_rowne: number;
+    rabat_procenty: number;
 }
 
 // Interface for dimensions
@@ -37,12 +34,12 @@ interface Marginesy {
 // Main interface for profile
 interface Profile {
     type: string;
-    cena_za_1m_od_powierzchni_naklejki: PriceThresholds;
+    cena_za_1m_od_powierzchni_naklejki: PriceThreshold[];
     cena_minimalna: number;
     koszt_projektu: number;
     doplata_za_sztuke: number;
     dodatki: Dodatek[];
-    rabat: Rabat;
+    rabat: RabatValue[];
     wymiary: Wymiary;
     marginesy: Marginesy;
 }
@@ -52,4 +49,4 @@ interface JsonResponse {
     profile: Profile;
 }
 
-export type { JsonResponse, Profile, CenaZa1m, PriceThresholds, Dodatek, Rabat, Wymiary, Marginesy };
+export type { JsonResponse, Profile, PriceThreshold, Dodatek, RabatValue, Wymiary, Marginesy };
