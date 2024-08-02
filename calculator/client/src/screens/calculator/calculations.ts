@@ -1,4 +1,5 @@
 import {Dodatek, PriceThreshold, Profile} from "../../types/types";
+import {CalculatorResult, Dodatkowo} from "../../types/calcualtorResult";
 
 let jsonProfileObject: Profile;
 
@@ -13,9 +14,7 @@ const setJSON = (jsonProfile: Profile ) => {
 const getArea = (longerEdge:number, shorterEdge: number, quantity: number) => {
     let widthWithMargins =  jsonProfileObject.marginesy.szerokosc * 2 + longerEdge;
     let heightWithMargins =  jsonProfileObject.marginesy.wysokosc * 2 + shorterEdge;
-    let areaSquareMeters = (widthWithMargins * heightWithMargins * quantity) / 10000;
-
-    return areaSquareMeters;
+    return (widthWithMargins * heightWithMargins * quantity) / 10000;
 }
 
 const getBasePrice = (area: number) :number => {
@@ -84,16 +83,13 @@ const getMinimalPrice = (formParams: any) => {
     return minimalPrice;
 }
 
-const calculatePrice = (formParams: any): number => {
+const calculatePrice = (formParams: any): CalculatorResult => {
     // area includes the margins as 2x jsonObject.marginesy.szerokosc + 2x jsonObject.marginesy.wysokosc!
     let area: number = getArea(formParams.dluzszy_bok, formParams.krotszy_bok, formParams.ilosc_szt);
-    console.log("Area: ", area);
     let basePrice: number = getBasePrice(area);
-    console.log("BasePrice: ", basePrice);
     let projectCost: number = jsonProfileObject.koszt_projektu;
     let additionalCostPerItem = jsonProfileObject.doplata_za_sztuke * formParams.ilosc_szt;
     let additionalFeaturesCost = getFeaturesCost(area, formParams);
-    console.log("Additional features costs:", additionalFeaturesCost);
     // calculated as overall discount including project cost!
     let discount: number = getDiscount(area);
 
@@ -102,13 +98,38 @@ const calculatePrice = (formParams: any): number => {
     let discountedPrice: number = totalPrice - totalPrice * discount/100;
 
     let minimalPrice: number = getMinimalPrice(formParams);
-    console.log("Minimal Price: ", minimalPrice);
     // Final price is given as netto!
     let finalPrice = discountedPrice < minimalPrice ? minimalPrice : discountedPrice;
-    console.log("Inside Price Netto:", finalPrice);
-    return finalPrice;
+
+    return packIntoJSON(formParams, finalPrice, minimalPrice);
 }
 
+const packIntoJSON = (formParams: any, priceNetto: number, minimalPriceNetto: number): CalculatorResult => {
+    // Filter and transform formParams to create the Dodatkowo array
+
+    const dodatki: Dodatkowo[] = Object.entries(formParams)
+        .filter(([key]) => key !== "krotszy_bok" && key !== "dluzszy_bok" && key !== "ilosc_szt")
+        .map(([key, value]) => ({
+            typ: key,
+            czy_zastosowany: Boolean(value)  // Ensure the value is a boolean
+        }));
+
+    // Create the CalculatorResult object
+    return {
+        typ: jsonProfileObject.type,
+        dodatki: dodatki,
+        cena_netto: priceNetto,
+        cena_brutto: convertToBrutto(priceNetto),
+        cena_minimalna_netto: minimalPriceNetto,
+        cena_minimalna_brutto: convertToBrutto(minimalPriceNetto),
+        cena_za_szt_netto: priceNetto / formParams.ilosc_szt,
+        ilosc_szt: formParams.ilosc_szt,
+        wymiary: {
+            krotszy_bok: formParams.krotszy_bok,
+            dluzszy_bok: formParams.dluzszy_bok
+        }
+    };
+};
 const convertToBrutto = (priceNetto: number): number => {
 
     // assuming that VAT is 23%
