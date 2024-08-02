@@ -13,7 +13,7 @@ const StyledCheckBox = styled.input`
 
 
 const StyledLabel = styled.label`
-    width: 30%;
+    width: 40%;
 `;
 
 const StyledDiv = styled.div`
