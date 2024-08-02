@@ -86,10 +86,11 @@ const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
     const calculate = () => {
         console.log('Printing form data:', formState);
         if (profile){
-            console.log("Form params as json: ", Object.fromEntries(Object.entries(formState)));
+            let formParams = Object.fromEntries(Object.entries(formState));
+            console.log("Form params as json: ", formParams);
             setJSON(profile);
             try {
-                let priceNetto = calculatePrice(formState["dluzszy_bok"], formState["krotszy_bok"], formState["ilosc_szt"]);
+                let priceNetto = calculatePrice(formParams);
                 let priceBrutto = convertToBrutto(priceNetto);
 
                 console.log("Calculated price Netto: ", priceNetto, " \nAnd price Brutto: ", priceBrutto);

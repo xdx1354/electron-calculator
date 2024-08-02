@@ -1,4 +1,4 @@
-import {PriceThreshold, Profile} from "../../types/types";
+import {Dodatek, PriceThreshold, Profile} from "../../types/types";
 
 let jsonProfileObject: Profile;
 
@@ -48,42 +48,52 @@ const getDiscount = (area: number): number => {
     return discount;
 }
 
-const getFeaturesCost = (area: number) => {
+const getFeaturesCost = (area: number, formParams: any) => {
 
     let additionalCostPerSquareMeter: number = 0;
 
-    jsonProfileObject.dodatki.forEach((item) => {
-        additionalCostPerSquareMeter += item.dodatkowo_za_1m;
-    })
+    // finding additional features in Form JSON params and then finding their values in the Configuration JSON
+    Object.entries(formParams).forEach(([key, value]) => {
+        if (value === true && key !== "krotszy_bok" && key !== "dluzszy_bok" && key !== "ilosc_szt") {
+            jsonProfileObject.dodatki.forEach((it: Dodatek) => {
+                if (it.typ === key) {
+                    additionalCostPerSquareMeter += it.dodatkowo_za_1m;
+                }
+            });
+        }
+    });
 
     return additionalCostPerSquareMeter * area;
 }
 
-const getMinimalPrice = () => {
+const getMinimalPrice = (formParams: any) => {
     let minimalPrice = 0;
 
     // Base minimal price
     minimalPrice += jsonProfileObject.cena_minimalna;
 
-    // Additional minimal price for each feature
-    jsonProfileObject.dodatki.forEach((item) => {
-        minimalPrice += item.dodatkowo_do_ceny_minimalnej;
-    })
-
+    Object.entries(formParams).forEach(([key, value]) => {
+        if (value === true && key !== "krotszy_bok" && key !== "dluzszy_bok" && key !== "ilosc_szt") {
+            jsonProfileObject.dodatki.forEach((it: Dodatek) => {
+                if (it.typ === key) {
+                    minimalPrice += it.dodatkowo_do_ceny_minimalnej;
+                }
+            });
+        }
+    });
     return minimalPrice;
 }
 
-const calculatePrice = (longerEdge:number, shorterEdge: number, quantity: number): number => {
-
+const calculatePrice = (formParams: any): number => {
     // area includes the margins as 2x jsonObject.marginesy.szerokosc + 2x jsonObject.marginesy.wysokosc!
-    let area: number = getArea(longerEdge, shorterEdge, quantity);
+    let area: number = getArea(formParams.dluzszy_bok, formParams.krotszy_bok, formParams.ilosc_szt);
     console.log("Area: ", area);
     let basePrice: number = getBasePrice(area);
     console.log("BasePrice: ", basePrice);
     let projectCost: number = jsonProfileObject.koszt_projektu;
-    let additionalCostPerItem = jsonProfileObject.doplata_za_sztuke * quantity;
-    let additionalFeaturesCost = getFeaturesCost(area);
-
+    let additionalCostPerItem = jsonProfileObject.doplata_za_sztuke * formParams.ilosc_szt;
+    let additionalFeaturesCost = getFeaturesCost(area, formParams);
+    console.log("Additional features costs:", additionalFeaturesCost);
     // calculated as overall discount including project cost!
     let discount: number = getDiscount(area);
 
@@ -91,7 +101,7 @@ const calculatePrice = (longerEdge:number, shorterEdge: number, quantity: number
 
     let discountedPrice: number = totalPrice - totalPrice * discount/100;
 
-    let minimalPrice: number = getMinimalPrice();
+    let minimalPrice: number = getMinimalPrice(formParams);
     console.log("Minimal Price: ", minimalPrice);
     // Final price is given as netto!
     let finalPrice = discountedPrice < minimalPrice ? minimalPrice : discountedPrice;
