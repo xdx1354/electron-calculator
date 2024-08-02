@@ -13,7 +13,7 @@ const StyledCheckBox = styled.input`
 
 
 const StyledLabel = styled.label`
-    width: 30%;
+    width: 40%;
 `;
 
 const StyledDiv = styled.div`
@@ -31,6 +31,7 @@ const CustomCheckBox = ({ ...props }) => {
             <StyledDiv>
                 <StyledLabel htmlFor="shorter-edge" >{props.label}</StyledLabel>
                 <StyledCheckBox
+                    checked={props.checked}
                     type={props.type}
                     placeholder={props.placeholder}
                     value={props.value}

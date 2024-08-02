@@ -3,6 +3,7 @@ import CalculatorLeftSideBody from "./leftCard/CalculatorLeftSideBody";
 import {useLocation} from "react-router-dom";
 import CalculatorRightSideBody from "./rightCard/CalculatorRightSideBody";
 import styled from "styled-components";
+import {Profile} from "../../types/types";
 
 const CalculatorCard = styled.div`
     height: 100vh;
@@ -45,7 +46,7 @@ function Calculator() {
 
         <CalculatorCard>
             <CalculatorCardBody>
-                <CalculatorLeftSideBody profile={profile}></CalculatorLeftSideBody>
+                <CalculatorLeftSideBody profileProp={profile}></CalculatorLeftSideBody>
                 <CalculatorRightSideBody></CalculatorRightSideBody>
             </CalculatorCardBody>
         </CalculatorCard>

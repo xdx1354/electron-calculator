@@ -16,12 +16,13 @@
     "cena_minimalna": 96.00,
     "koszt_projektu": 24.00,
     "doplata_za_sztuke": 0.0,
-    "dodatki": {
-      "laminowanie": {
+    "dodatki": [
+      {
+        "typ": "szary_klej_maskujacy",
         "dodatkowo_za_1m": 41,
         "dodatkowo_do_ceny_minimalnej": 48
       }
-    },
+    ],
     "rabat": {
       "1": 2,
       "2": 4,
