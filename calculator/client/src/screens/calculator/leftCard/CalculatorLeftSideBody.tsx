@@ -6,7 +6,7 @@ import CustomCheckBox from "../../../components/CustomCheckBox";
 import CustomButton from "../../../components/CustomButton";
 import { Profile } from "../../../types/types";
 import {useLocation} from "react-router-dom";
-import {type} from "node:os";
+import {calculatePrice, convertToBrutto, setJSON} from "../calculations";
 
 const BodyDiv = styled.div`
     display: flex;
@@ -83,8 +83,22 @@ const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
         }));
     }
 
-    const temp = () => {
+    const calculate = () => {
         console.log('Printing form data:', formState);
+        if (profile){
+            console.log("Form params as json: ", Object.fromEntries(Object.entries(formState)));
+            setJSON(profile);
+            try {
+                let priceNetto = calculatePrice(formState["dluzszy_bok"], formState["krotszy_bok"], formState["ilosc_szt"]);
+                let priceBrutto = convertToBrutto(priceNetto);
+
+                console.log("Calculated price Netto: ", priceNetto, " \nAnd price Brutto: ", priceBrutto);
+            } catch (e) {
+                throw e;
+            }
+        } else {
+            throw new Error("No profile found.");
+        }
     }
 
     return (
@@ -124,7 +138,7 @@ const CalculatorLeftSideBody: React.FunctionComponent<Props> = () => {
 
 
                 <ButtonWrapper>
-                    <CustomButton text={"OBLICZ"} function={temp} />
+                    <CustomButton text={"OBLICZ"} function={calculate} />
                 </ButtonWrapper>
             </FormWrapper>
         </BodyDiv>
