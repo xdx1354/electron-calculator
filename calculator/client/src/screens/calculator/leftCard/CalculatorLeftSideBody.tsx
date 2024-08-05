@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CalculatorHeader from "../../../components/CalculatorHeader";
-import CustomInput from "../../../components/FormField";
+import CustomInput from "../../../components/CustomInput";
 import styled from "styled-components";
 import CustomCheckBox from "../../../components/CustomCheckBox";
 import CustomButton from "../../../components/CustomButton";
@@ -88,7 +88,7 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
         console.log('Printing form data:', formState);
         if (profile){
             let formParams = Object.fromEntries(Object.entries(formState));
-            console.log("Form params as json: ", formParams);
+            console.log("form params as json: ", formParams);
             try {
                 const result = calculatePrice(formParams);
                 console.log("Calculation results const: ", result);
