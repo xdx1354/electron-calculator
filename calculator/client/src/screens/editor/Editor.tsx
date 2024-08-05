@@ -2,8 +2,10 @@ import CalculatorHeader from "../../components/CalculatorHeader";
 import React from "react";
 import styled from "styled-components";
 import Form from "./form/Form";
+import {useLocation} from "react-router-dom";
+import ChooseCardHeader from "../../components/chooseActionScreenComponents/ChooseCardHeader";
 
-const Card = styled.div`
+const Screen = styled.div`
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -11,16 +13,30 @@ const Card = styled.div`
     justify-content: center;
     align-items: center;
     background-color: #1E1C1C;
-`;
+`
 
-const CardBody = styled.div`
+const Card = styled.div`
     display: flex;
     height: 75vh;
     width: 60vw;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: #413E3E;
+    border-radius: 25px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #1E1C1C;
+`;
+
+const CardBody = styled.div`
+    display: flex;
+    height: 95%;
+    width: 95%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FBFBFB;
     border-radius: 25px;
     border-width: 1px;
     border-style: solid;
@@ -31,13 +47,20 @@ const CardBody = styled.div`
 
 
 const Editor: React.FC = () => {
+
+    const location = useLocation();
+    const { profile } = location.state || {};
+
     return(
-        <Card>
-            <CardBody>
-                <CalculatorHeader color={"white"} title={"Editor"}/>
-                <Form></Form>
-            </CardBody>
-        </Card>
+        <Screen>
+            <Card>
+                <CardBody>
+                    <CalculatorHeader color={"black"} title={"Editor"}/>
+                    <Form profile={profile}/>
+                </CardBody>
+            </Card>
+        </Screen>
+
     );
 }
 

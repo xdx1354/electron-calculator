@@ -35,7 +35,7 @@ const ProfileCard: React.FC<Props> = (props) => {
             const fetchedConfig= await props.fetchConfig();
             console.log('CONFIG:', fetchedConfig); // Should log the updated config
 
-            navigate('/calculator', { state: { profile: fetchedConfig.profile } });
+            navigate('/editor', { state: { profile: fetchedConfig.profile } });
         } catch (error) {
             console.error('Error navigating:', error);
         }
