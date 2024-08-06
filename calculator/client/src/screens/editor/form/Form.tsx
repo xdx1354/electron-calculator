@@ -1,6 +1,6 @@
 import CustomInput from "../../../components/CustomInput";
-import React from "react";
-import {Profile} from "../../../types/types";
+import React, {useState} from "react";
+import {Dodatek, JsonResponse, Profile, RabatValue} from "../../../types/types";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
 
@@ -61,10 +61,44 @@ const ButtonWrapper = styled.div`
     width: 20vw;
     margin: 5vh;
 `
-const Form: React.FC<Props> = () => {
+const Form: React.FC<Props> = (props) => {
+
+    const [formData, setFormData] = useState<Profile>(props.profile);
+
+    const handleInputChange = (section: keyof Profile, field: string, index: number|undefined, value: any) => {
+        if (index !== undefined) {
+            const updatedSection = [...formData[section] as any[]];
+            updatedSection[index][field] = value;
+            setFormData({ ...formData, [section]: updatedSection });
+        } else {
+             if (field === "") {
+                 setFormData({ ...formData, [section]: { ...formData[section] as object, value } });
+
+             }
+            setFormData({ ...formData, [section]: { ...formData[section] as object, [field]: value } });
+        }
+    };
+
+    const handleSave = async () => {
+        // creating valid json
+        const data: JsonResponse = {profile: formData};
+
+        console.log("Prepared data: ", data);
+    }
+
+    const addField = (section: string ): void => {
+        if( section === "rabat" ) {
+            const newRabat: RabatValue = { wieksze_rowne: 0, rabat_procenty: 0 };
+            setFormData({...formData, rabat: [...formData.rabat, newRabat]});
+        } else if (section === "dodatek") {
+            const newDodatek: Dodatek = { typ: "", dodatkowo_do_ceny_minimalnej: 0, dodatkowo_za_1m: 0 };
+            setFormData({...formData, dodatki: [...formData.dodatki, newDodatek]});
+        }
+    }
+
     return(
         <FormWrapper>
-
+            <h1>DODAĆ INPUT NA NAZWĘ</h1>
             <EditorSection>
                 <h2>Podstawowe informacje</h2>
                 <GridContainer3>
@@ -74,7 +108,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Cena minimalna netto"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props?.profile?.cena_minimalna}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_minimalna", "", undefined, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
 
@@ -84,7 +121,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Koszt projektu"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props?.profile?.koszt_projektu}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("koszt_projektu", "", undefined, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
 
@@ -94,7 +134,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Dopłata za sztukę"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile?.doplata_za_sztuke}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("doplata_za_sztuke", "", undefined, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                 </GridContainer3>
@@ -112,7 +155,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Max szerokość krótszego boku"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.wymiary.max_krotszy_bok}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("wymiary", "max_krotszy_bok", undefined, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
 
@@ -122,7 +168,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Margines na stronę poziom"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.marginesy.szerokosc}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("marginesy", "szerokosc", undefined, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
 
@@ -132,7 +181,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Margines na stronę pion"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.marginesy.wysokosc}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("marginesy", "wysokosc", undefined, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                 </GridContainer3>
@@ -151,7 +203,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki od (wyłącznie)"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[0].wieksze_niz}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_za_1m_od_powierzchni_naklejki", "wieksze_niz", 0, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                     <GridItem>
@@ -160,7 +215,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki do (włącznie)"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[0].mniejsze_rowne_niz}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_za_1m_od_powierzchni_naklejki", "mniejsze_rowne_niz", 0, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                     <GridItem>
@@ -169,7 +227,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"cena za metr kwadratowy"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[0].cena}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_za_1m_od_powierzchni_naklejki", "cena", 0, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
 
@@ -179,7 +240,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki od (wyłącznie)"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[1].wieksze_niz}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_za_1m_od_powierzchni_naklejki", "wieksze_niz", 1, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                     <GridItem>
@@ -188,7 +252,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki do (włącznie)"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[1].mniejsze_rowne_niz}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_za_1m_od_powierzchni_naklejki", "mniejsze_rowne_niz", 1, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                     <GridItem>
@@ -197,7 +264,10 @@ const Form: React.FC<Props> = () => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"cena za metr kwadratowy"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[1].cena}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("cena_za_1m_od_powierzchni_naklejki", "cena", 1, parseFloat(e.target.value))
+                            }
                         />
                     </GridItem>
                 </GridContainer3>
@@ -208,117 +278,51 @@ const Form: React.FC<Props> = () => {
             <EditorSection>
                 <h2>Dodatki</h2>
                 <GridContainer3>
-                    <GridItem>
-                        <CustomInput
-                            key={"typ"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Nazwa dodatkowej opcji"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_za_1m"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Cena za 1m kwadratowy"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_do_ceny_minimalnej"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Kwota do ceny minimalnej"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                    {formData.dodatki.map((dodatek, index: number) => (
+                        <>
+                            <GridItem>
+                                <CustomInput
+                                    key={"typ"}
+                                    type={"text"}
+                                    placeholder={"wartość"}
+                                    label={"Nazwa dodatkowej opcji"}
+                                    defaultValue={props.profile?.dodatki?.[index]?.typ.replaceAll('_', " ")}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        handleInputChange("dodatki", "typ", index, e.target.value)
+                                    }
+                                />
+                            </GridItem>
 
-                    <GridItem>
-                        <CustomInput
-                            key={"typ"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Nazwa dodatkowej opcji"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_za_1m"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Cena za 1m kwadratowy"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_do_ceny_minimalnej"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Kwota do ceny minimalnej"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                            <GridItem>
+                                <CustomInput
+                                    key={"dodatkowo_za_1m"}
+                                    type={"number"}
+                                    placeholder={"wartość"}
+                                    label={"Cena za 1m kwadratowy"}
+                                    defaultValue={props.profile?.dodatki?.[index]?.dodatkowo_za_1m}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        handleInputChange("dodatki", "dodatkowo_za_1m", index, parseFloat(e.target.value))
+                                    }
+                                />
+                            </GridItem>
 
-                    <GridItem>
-                        <CustomInput
-                            key={"typ"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Nazwa dodatkowej opcji"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_za_1m"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Cena za 1m kwadratowy"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_do_ceny_minimalnej"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Kwota do ceny minimalnej"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                            <GridItem>
+                                <CustomInput
+                                    key={"dodatkowo_do_ceny_minimalnej"}
+                                    type={"number"}
+                                    placeholder={"wartość"}
+                                    label={"Kwota do ceny minimalnej"}
+                                    defaultValue={props.profile?.dodatki?.[index]?.dodatkowo_do_ceny_minimalnej}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        handleInputChange("dodatki", "dodatkowo_za_1m", index, parseFloat(e.target.value))
+                                    }
+                                />
+                            </GridItem>
+                        </>
+                    ))}
 
-                    <GridItem>
-                        <CustomInput
-                            key={"typ"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Nazwa dodatkowej opcji"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_za_1m"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Cena za 1m kwadratowy"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"dodatkowo_do_ceny_minimalnej"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Kwota do ceny minimalnej"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                    <CustomButton text={"+"} function={() => addField("dodatek")}/>
+
                 </GridContainer3>
             </EditorSection>
 
@@ -327,163 +331,46 @@ const Form: React.FC<Props> = () => {
             <EditorSection>
                 <h2>Rabatowanie</h2>
                 <GridContainer2>
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
 
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                    {formData.rabat.map((rabat, index: number) => (
+                        <>
 
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                            <GridItem>
+                                <CustomInput
+                                    key={"wieksze_rowne"}
+                                    type={"number"}
+                                    placeholder={"wartość"}
+                                    label={"Powierzchnia zamównienia od:"}
+                                    defaultValue={props.profile?.rabat?.[index]?.wieksze_rowne}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        handleInputChange("rabat", "wieksze_rowne", index, parseFloat(e.target.value))
+                                    }
+                                />
+                            </GridItem>
+                            <GridItem>
+                                <CustomInput
+                                    key={"rabat_procenty"}
+                                    type={"number"}
+                                    placeholder={"wartość"}
+                                    label={"Rabat w procentach"}
+                                    defaultValue={props.profile?.rabat?.[index]?.rabat_procenty}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        handleInputChange("rabat", "rabat_procenty", index, parseFloat(e.target.value))
+                                    }
+                                />
+                            </GridItem>
 
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                        </>
 
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                    ))}
 
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-
-                    <GridItem>
-                        <CustomInput
-                            key={"wieksze_rowne"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Powierzchnia zamównienia od:"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <CustomInput
-                            key={"rabat_procenty"}
-                            type={"number"}
-                            placeholder={"wartość"}
-                            label={"Rabat w procentach"}
-                            //onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                        />
-                    </GridItem>
+                    <CustomButton text={"+"} function={() => addField("rabat")}/>
                 </GridContainer2>
             </EditorSection>
 
             <HorizontalLine/>
             <ButtonWrapper>
-                <CustomButton text="ZAPISZ"/>
+                <CustomButton text="ZAPISZ" function={handleSave}/>
             </ButtonWrapper>
 
         </FormWrapper>
