@@ -62,6 +62,21 @@ app.post('/save/:filename', (req, res) => {
 
 });
 
+app.delete('/delete/:filename', (req, res) => {
+    const filename = req.params.filename + '.json';
+    const dirPath = path.join('server','data', filename);
+
+    fs.unlink(dirPath, (err) => {
+        if (err) {
+            console.error('Error deleting file:', err);
+            return res.status(500).send('Error deleting file');
+        }
+        res.status(200).send('File deleted');
+    });
+
+
+})
+
 // Startowanie serwera
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

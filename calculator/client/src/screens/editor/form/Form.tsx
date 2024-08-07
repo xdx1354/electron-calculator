@@ -3,6 +3,8 @@ import React, {useState} from "react";
 import {Dodatek, Profile, RabatValue} from "../../../types/types";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
+import {useNavigate} from "react-router-dom";
+import ModalComponent from "../../../components/modal/Modal";
 
 type Props = {
     profile: Profile;
@@ -55,13 +57,28 @@ const HorizontalLine = styled.hr`
 const ButtonWrapper = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     height: 20vh;
     width: 20vw;
-    margin: 5vh;
+    //margin: 5vh;
 `
+
+const ButtonSection = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+`
+
 const Form: React.FC<Props> = (props) => {
+
+    const navigate = useNavigate();
+
+    const [isModalSaveOpen, setIsModalSaveOpen] = React.useState<boolean>(false);
+    const [isModalExitOpen, setIsModalExitOpen] = React.useState<boolean>(false);
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = React.useState<boolean>(false);
 
     const [formData, setFormData] = useState<Profile>(props.profile);
 
@@ -84,7 +101,7 @@ const Form: React.FC<Props> = (props) => {
     };
 
     const handleSave = async () => {
-        let filename = formData.type.replace(' ', '_');
+        let filename = formData.type.replaceAll(' ', '_');
         const data = { profile: formData };
         const preparedData = JSON.stringify(data);
 
@@ -110,6 +127,46 @@ const Form: React.FC<Props> = (props) => {
         }
     };
 
+    const handleDelete = async () => {
+        let filename = formData.type.replace(' ', '_');
+        const url = 'http://localhost:4001/delete/' + filename;
+
+        try {
+            const response = await fetch(url, { method: 'DELETE' }); // Ensure method is DELETE
+            if (response.ok) {
+                console.log("File ", filename, " deleted successfully. ", response.statusText);
+                navigate('/browse');
+            } else {
+                console.error("Error deleting:", response.statusText);
+            }
+        } catch (err) {
+            console.error("Error deleting:", err);
+        }
+    }
+
+
+    const openSaveModal = () => setIsModalSaveOpen(true);
+    const closeSaveModal = () => setIsModalSaveOpen(false);
+
+    const openDeleteModal = () => setIsModalDeleteOpen(true);
+    const closeDeleteModal = () => setIsModalDeleteOpen(false);
+
+    const openExitModal = () => setIsModalExitOpen(true);
+    const closeExitModal = () => setIsModalExitOpen(false);
+
+    const handleConfirmSave = () => {
+        handleSave().then(closeSaveModal);
+    };
+    const handleConfirmExit = () => {
+        closeExitModal();
+        navigate('/browse');
+    };
+    const handleConfirmDelete = () => {
+        console.log('About to delete a file!');
+        handleDelete().then(closeDeleteModal).catch(console.error);
+        navigate('/browse');
+
+    }
 
     const addField = (section: string ): void => {
         if( section === "rabat" ) {
@@ -408,14 +465,50 @@ const Form: React.FC<Props> = (props) => {
 
                     ))}
 
-                    <CustomButton text={"+"} function={() => addField("rabat")}/>
                 </GridContainer2>
+                <ButtonSection>
+                        <CustomButton text={"+"} function={() => addField("rabat")}/>
+                </ButtonSection>
             </EditorSection>
 
             <HorizontalLine/>
-            <ButtonWrapper>
-                <CustomButton text="ZAPISZ" function={handleSave}/>
-            </ButtonWrapper>
+            <ButtonSection>
+                <ButtonWrapper>
+                    <CustomButton text="ZAPISZ" function={openSaveModal}/>
+                    <ModalComponent
+                        isOpen={isModalSaveOpen}
+                        onRequestClose={closeSaveModal}
+                        title="Confirm Action"
+                        onConfirm={handleConfirmSave}
+                    >
+                        <p>Do you want to proceed with this action?</p>
+                    </ModalComponent>
+                </ButtonWrapper>
+
+                <ButtonWrapper>
+                    <CustomButton text="DELETE" function={openDeleteModal}/>
+                    <ModalComponent
+                        isOpen={isModalDeleteOpen}
+                        onRequestClose={closeDeleteModal}
+                        title="Confirm Action"
+                        onConfirm={handleConfirmDelete}
+                    >
+                        <p>Czy chcesz usunąć ten plik? </p>
+                    </ModalComponent>
+                </ButtonWrapper>
+
+                <ButtonWrapper>
+                    <CustomButton text="EXIT" function={openExitModal}/>
+                    <ModalComponent
+                        isOpen={isModalExitOpen}
+                        onRequestClose={closeExitModal}
+                        title="Confirm Action"
+                        onConfirm={handleConfirmExit}
+                    >
+                        <p>Czy chcesz wyjść? Niezapisane zmiany zostaną utracone! </p>
+                    </ModalComponent>
+                </ButtonWrapper>
+            </ButtonSection>
 
         </FormWrapper>
 
