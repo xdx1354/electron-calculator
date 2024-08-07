@@ -38,7 +38,6 @@ app.get('/files', (req, res) => {
     } catch (err) {
         res.status(500).json({message: "Unable to read dir", error: err});
     }
-
 });
 
 app.use(bodyParser.json());
@@ -59,7 +58,6 @@ app.post('/save/:filename', (req, res) => {
     } catch (err) {
         res.status(500).send('Error creating file');
     }
-
 });
 
 app.delete('/delete/:filename', (req, res) => {
@@ -73,8 +71,6 @@ app.delete('/delete/:filename', (req, res) => {
         }
         res.status(200).send('File deleted');
     });
-
-
 })
 
 // Startowanie serwera

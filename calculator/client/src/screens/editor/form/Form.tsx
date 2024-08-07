@@ -435,7 +435,6 @@ const Form: React.FC<Props> = (props) => {
 
                     {formData.rabat.map((rabat, index: number) => (
                         <>
-
                             <GridItem>
                                 <CustomInput
                                     key={`wieksze_rowne_${index}`}
@@ -460,9 +459,7 @@ const Form: React.FC<Props> = (props) => {
                                     }
                                 />
                             </GridItem>
-
                         </>
-
                     ))}
 
                 </GridContainer2>
