@@ -116,7 +116,7 @@ const Form: React.FC<Props> = (props) => {
             const newRabat: RabatValue = { wieksze_rowne: 0, rabat_procenty: 0 };
             setFormData({...formData, rabat: [...formData.rabat, newRabat]});
         } else if (section === "dodatek") {
-            const newDodatek: Dodatek = { typ: "", dodatkowo_do_ceny_minimalnej: 0, dodatkowo_za_1m: 0 };
+            const newDodatek: Dodatek = { typ: "", dodatkowo_za_1m: 0, dodatkowo_do_ceny_minimalnej: 0 };
             setFormData({...formData, dodatki: [...formData.dodatki, newDodatek]});
         }
     }
@@ -358,7 +358,7 @@ const Form: React.FC<Props> = (props) => {
                                     label={"Kwota do ceny minimalnej"}
                                     defaultValue={props.profile?.dodatki?.[index]?.dodatkowo_do_ceny_minimalnej}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                        handleInputChange("dodatki", "dodatkowo_za_1m", index, parseFloat(e.target.value))
+                                        handleInputChange("dodatki", "dodatkowo_do_ceny_minimalnej", index, parseFloat(e.target.value))
                                     }
                                 />
                             </GridItem>

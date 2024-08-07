@@ -21,8 +21,13 @@
     "dodatki": [
       {
         "typ": "szary_klej_maskujacy",
-        "dodatkowo_za_1m": 41,
-        "dodatkowo_do_ceny_minimalnej": 48
+        "dodatkowo_za_1m": 40,
+        "dodatkowo_do_ceny_minimalnej": 76
+      },
+      {
+        "typ": "klej klejący",
+        "dodatkowo_do_ceny_minimalnej": 100,
+        "dodatkowo_za_1m": 11
       }
     ],
     "rabat": [
@@ -85,6 +90,10 @@
       {
         "wieksze_rowne": 15,
         "rabat_procenty": 25
+      },
+      {
+        "wieksze_rowne": 16,
+        "rabat_procenty": 234
       }
     ],
     "wymiary": {
