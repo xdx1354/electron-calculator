@@ -1,6 +1,6 @@
 import CustomInput from "../../../components/CustomInput";
 import React, {useState} from "react";
-import {Dodatek, JsonResponse, Profile, RabatValue} from "../../../types/types";
+import {Dodatek, Profile, RabatValue} from "../../../types/types";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
 
@@ -65,26 +65,51 @@ const Form: React.FC<Props> = (props) => {
 
     const [formData, setFormData] = useState<Profile>(props.profile);
 
-    const handleInputChange = (section: keyof Profile, field: string, index: number|undefined, value: any) => {
+    const handleInputChange = (section: keyof Profile, field: string, index: number | undefined, value: any) => {
         if (index !== undefined) {
-            const updatedSection = [...formData[section] as any[]];
+            const updatedSection = [...(formData[section] as any[])];
             updatedSection[index][field] = value;
             setFormData({ ...formData, [section]: updatedSection });
         } else {
-             if (field === "") {
-                 setFormData({ ...formData, [section]: { ...formData[section] as object, value } });
-
-             }
-            setFormData({ ...formData, [section]: { ...formData[section] as object, [field]: value } });
+            if (section === "type") {
+                setFormData({ ...formData, [section]: value });
+            } else {
+                if (field === "") {
+                    setFormData({ ...formData, [section]: value });
+                } else {
+                    setFormData({ ...formData, [section]: { ...(formData[section] as object), [field]: value } });
+                }
+            }
         }
     };
 
     const handleSave = async () => {
-        // creating valid json
-        const data: JsonResponse = {profile: formData};
+        let filename = formData.type.replace(' ', '_');
+        const data = { profile: formData };
+        const preparedData = JSON.stringify(data);
 
-        console.log("Prepared data: ", data);
-    }
+        console.log("Prepared dataaa: ", preparedData, "\n filename: ", filename);
+
+        try {
+            const response = await fetch('http://localhost:4001/save/' + filename, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: preparedData
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                console.log("Server response: ", result);
+            } else {
+                console.error("Error saving config:", response.statusText);
+            }
+        } catch (err) {
+            console.error("Error making request: ", err);
+        }
+    };
+
 
     const addField = (section: string ): void => {
         if( section === "rabat" ) {
@@ -98,7 +123,26 @@ const Form: React.FC<Props> = (props) => {
 
     return(
         <FormWrapper>
-            <h1>DODAĆ INPUT NA NAZWĘ</h1>
+            <EditorSection>
+                {/*<h2>Profil: {formData.type}</h2>*/}
+                <GridContainer3>
+                    <GridItem>
+                        <CustomInput
+                            key="type"
+                            type="text"
+                            placeholder="tekst"
+                            label="Nazwa"
+                            defaultValue={props?.profile?.type}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleInputChange("type", "", undefined, e.target.value)
+                            }
+                        />
+
+                    </GridItem>
+                </GridContainer3>
+
+            </EditorSection>
+
             <EditorSection>
                 <h2>Podstawowe informacje</h2>
                 <GridContainer3>
@@ -282,7 +326,7 @@ const Form: React.FC<Props> = (props) => {
                         <>
                             <GridItem>
                                 <CustomInput
-                                    key={"typ"}
+                                    key={`typ_${index}`}
                                     type={"text"}
                                     placeholder={"wartość"}
                                     label={"Nazwa dodatkowej opcji"}
@@ -295,7 +339,7 @@ const Form: React.FC<Props> = (props) => {
 
                             <GridItem>
                                 <CustomInput
-                                    key={"dodatkowo_za_1m"}
+                                    key={`dodatkowo_za_1m_${index}`}
                                     type={"number"}
                                     placeholder={"wartość"}
                                     label={"Cena za 1m kwadratowy"}
@@ -308,7 +352,7 @@ const Form: React.FC<Props> = (props) => {
 
                             <GridItem>
                                 <CustomInput
-                                    key={"dodatkowo_do_ceny_minimalnej"}
+                                    key={`dodatkowo_do_ceny_minimalnej_${index}`}
                                     type={"number"}
                                     placeholder={"wartość"}
                                     label={"Kwota do ceny minimalnej"}
@@ -337,7 +381,7 @@ const Form: React.FC<Props> = (props) => {
 
                             <GridItem>
                                 <CustomInput
-                                    key={"wieksze_rowne"}
+                                    key={`wieksze_rowne_${index}`}
                                     type={"number"}
                                     placeholder={"wartość"}
                                     label={"Powierzchnia zamównienia od:"}
@@ -349,7 +393,7 @@ const Form: React.FC<Props> = (props) => {
                             </GridItem>
                             <GridItem>
                                 <CustomInput
-                                    key={"rabat_procenty"}
+                                    key={`rabat_procenty_${index}`}
                                     type={"number"}
                                     placeholder={"wartość"}
                                     label={"Rabat w procentach"}

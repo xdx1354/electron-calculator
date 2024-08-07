@@ -46,6 +46,7 @@ const ProfilesBrowser: React.FC = () => {
             <CardBody>
                 <HeaderWrapper>
                     <CalculatorHeader title="Profile" color="white"/>
+
                 </HeaderWrapper>
                 <CardsContainer/>
             </CardBody>
