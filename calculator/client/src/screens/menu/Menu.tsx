@@ -1,8 +1,8 @@
 import CalculatorHeader from "../../components/CalculatorHeader";
 import React from "react";
 import styled from "styled-components";
-import Form from "./form/Form";
-import {useLocation} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import CustomButton from "../../components/CustomButton";
 import NavBar from "../../components/NavBar/NavBar";
 
 const Screen = styled.div`
@@ -17,8 +17,8 @@ const Screen = styled.div`
 
 const Card = styled.div`
     display: flex;
-    height: 75vh;
-    width: 60vw;
+    height: 40vh;
+    width: 30vw;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -31,10 +31,10 @@ const Card = styled.div`
 
 const CardBody = styled.div`
     display: flex;
-    height: 95%;
+    height: 90%;
     width: 95%;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     background-color: #FBFBFB;
     border-radius: 25px;
@@ -46,29 +46,25 @@ const CardBody = styled.div`
 `;
 
 
-const Editor: React.FC = () => {
+const Menu: React.FC = () => {
 
-    const location = useLocation();
-    const { profile } = location.state || {};
-
+    const navigate = useNavigate();
     return(
         <>
             <NavBar
-                isMenu={true}
-                menuPath={'/browse'}
+                isMenu={false}
             />
             <Screen>
                 <Card>
                     <CardBody>
-                        <CalculatorHeader color={"black"} title={"Editor"}/>
-                        <Form profile={profile}/>
+                        <CalculatorHeader color={"black"} title={"Menu"}/>
+                        <CustomButton text="Kalkulator" function={() => navigate("/config")}/>
+                        <CustomButton text="Edycja profili" function={() => navigate("/browse")}/>
                     </CardBody>
                 </Card>
             </Screen>
         </>
-
-
     );
 }
 
-export default Editor;
+export default Menu;

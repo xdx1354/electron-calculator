@@ -5,6 +5,7 @@ import CardsContainer from "./profilesList/CardsContainer";
 import CustomButton from "../../components/CustomButton";
 import ModalComponent from "../../components/modal/Modal";
 import CustomInput from "../../components/CustomInput";
+import NavBar from "../../components/NavBar/NavBar";
 
 
 const Card = styled.div`
@@ -70,95 +71,39 @@ const ProfilesBrowser: React.FC = () => {
                 {
                     "id": 1,
                     "wieksze_niz": 0,
-                    "mniejsze_rowne_niz": 4.5,
-                    "cena": 169
+                    "mniejsze_rowne_niz": 0,
+                    "cena": 0
                 },
                 {
                     "id": 2,
-                    "wieksze_niz": 4.5,
-                    "mniejsze_rowne_niz": 9999,
-                    "cena": 84.5
+                    "wieksze_niz": 0,
+                    "mniejsze_rowne_niz": 0,
+                    "cena": 0
                 }
             ],
-            "cena_minimalna": 96,
-            "koszt_projektu": 24,
+            "cena_minimalna": 0,
+            "koszt_projektu": 0,
             "doplata_za_sztuke": 0,
             "dodatki": [
                 {
                     "typ": "szary_klej_maskujacy",
-                    "dodatkowo_za_1m": 41,
-                    "dodatkowo_do_ceny_minimalnej": 48
+                    "dodatkowo_za_1m": 0,
+                    "dodatkowo_do_ceny_minimalnej": 0
                 }
             ],
             "rabat": [
                 {
-                    "wieksze_rowne": 1,
-                    "rabat_procenty": 2
-                },
-                {
-                    "wieksze_rowne": 2,
-                    "rabat_procenty": 4
-                },
-                {
-                    "wieksze_rowne": 3,
-                    "rabat_procenty": 6
-                },
-                {
-                    "wieksze_rowne": 4,
-                    "rabat_procenty": 8
-                },
-                {
-                    "wieksze_rowne": 5,
-                    "rabat_procenty": 10
-                },
-                {
-                    "wieksze_rowne": 6,
-                    "rabat_procenty": 12
-                },
-                {
-                    "wieksze_rowne": 7,
-                    "rabat_procenty": 14
-                },
-                {
-                    "wieksze_rowne": 8,
-                    "rabat_procenty": 16
-                },
-                {
-                    "wieksze_rowne": 9,
-                    "rabat_procenty": 18
-                },
-                {
-                    "wieksze_rowne": 10,
-                    "rabat_procenty": 20
-                },
-                {
-                    "wieksze_rowne": 11,
-                    "rabat_procenty": 22
-                },
-                {
-                    "wieksze_rowne": 12,
-                    "rabat_procenty": 24
-                },
-                {
-                    "wieksze_rowne": 13,
-                    "rabat_procenty": 25
-                },
-                {
-                    "wieksze_rowne": 14,
-                    "rabat_procenty": 25
-                },
-                {
-                    "wieksze_rowne": 15,
-                    "rabat_procenty": 25
+                    "wieksze_rowne": 0,
+                    "rabat_procenty": 0
                 }
             ],
             "wymiary": {
-                "max_krotszy_bok": 134,
-                "max_dluzszy_bok": 999
+                "max_krotszy_bok": 0,
+                "max_dluzszy_bok": 0
             },
             "marginesy": {
-                "szerokosc": 0.2,
-                "wysokosc": 0.2
+                "szerokosc": 0,
+                "wysokosc": 0
             }
         }
         let filename = newName;
@@ -192,36 +137,41 @@ const ProfilesBrowser: React.FC = () => {
 };
 
     return(
-        <Card>
-            <CardBody>
-                <HeaderWrapper>
-                    <CalculatorHeader title="Profile" color="white"/>
-                    <ButtonWrapper>
-                        <CustomButton text={"NEW"} function={openModal}/>
-                        <ModalComponent
-                            isOpen={isModalOpen}
-                            onRequestClose={closeModal}
-                            title="Confirm Action"
-                            onConfirm={handleConfirm}
-                        >
-                            <div>
-                                <p>Czy chcesz dodać nowy profil? Podaj unikalną nazwę!</p>
-                                    <CustomInput
-                                        key="name"
-                                        placeholder="text"
-                                        type="text"
-                                        defaultValue={newName}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                            setName(e.target.value)
-                                        }
-                                    />
-                            </div>
-                        </ModalComponent>
-                    </ButtonWrapper>
-                </HeaderWrapper>
-                <CardsContainer/>
-            </CardBody>
-        </Card>
+        <>
+            <NavBar
+                isMenu={false}
+            />
+            <Card>
+                <CardBody>
+                    <HeaderWrapper>
+                        <CalculatorHeader title="Profile" color="white"/>
+                        <ButtonWrapper>
+                            <CustomButton text={"NEW"} function={openModal}/>
+                            <ModalComponent
+                                isOpen={isModalOpen}
+                                onRequestClose={closeModal}
+                                title="Confirm Action"
+                                onConfirm={handleConfirm}
+                            >
+                                <div>
+                                    <p>Czy chcesz dodać nowy profil? Podaj unikalną nazwę!</p>
+                                        <CustomInput
+                                            key="name"
+                                            placeholder="text"
+                                            type="text"
+                                            defaultValue={newName}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setName(e.target.value)
+                                            }
+                                        />
+                                </div>
+                            </ModalComponent>
+                        </ButtonWrapper>
+                    </HeaderWrapper>
+                    <CardsContainer/>
+                </CardBody>
+            </Card>
+        </>
     );
 }
 export default ProfilesBrowser;
