@@ -17,7 +17,7 @@ const BodyDiv = styled.div`
     border-radius: 13px;
     height: 80%;
     width: 40%;
-    margin: 1% 1.5%; // top-bottom left-right
+    margin: 0.5% 1.5%; // top-bottom left-right
     padding: 5%;
     z-index: 2;
 `;
@@ -105,6 +105,7 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
     return (
         <BodyDiv>
             <CalculatorHeader title={"Kalkulator"} />
+            <h3>Profil: {profile.type}</h3>
             <FormWrapper>
                 <CustomInput
                     key={"krotszy_bok"}
