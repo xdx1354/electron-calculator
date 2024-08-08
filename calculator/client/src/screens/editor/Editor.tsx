@@ -3,7 +3,6 @@ import React from "react";
 import styled from "styled-components";
 import Form from "./form/Form";
 import {useLocation} from "react-router-dom";
-import ChooseCardHeader from "../../components/chooseActionScreenComponents/ChooseCardHeader";
 import NavBar from "../../components/NavBar/NavBar";
 
 const Screen = styled.div`

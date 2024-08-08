@@ -1,8 +1,7 @@
 import CalculatorHeader from "../../components/CalculatorHeader";
 import React from "react";
 import styled from "styled-components";
-import {useLocation, useNavigate} from "react-router-dom";
-import ChooseCardHeader from "../../components/chooseActionScreenComponents/ChooseCardHeader";
+import {useNavigate} from "react-router-dom";
 import CustomButton from "../../components/CustomButton";
 import NavBar from "../../components/NavBar/NavBar";
 
@@ -49,7 +48,6 @@ const CardBody = styled.div`
 
 const Menu: React.FC = () => {
 
-    const location = useLocation();
     const navigate = useNavigate();
     return(
         <>
