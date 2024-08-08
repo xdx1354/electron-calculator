@@ -4,6 +4,7 @@ import {useLocation} from "react-router-dom";
 import CalculatorRightSideBody from "./rightCard/CalculatorRightSideBody";
 import styled from "styled-components";
 import {CalculatorResult} from "../../types/calcualtorResult";
+import NavBar from "../../components/NavBar/NavBar";
 
 const CalculatorCard = styled.div`
     height: 100vh;
@@ -58,20 +59,24 @@ function Calculator() {
     }, []);
 
     return (
-
-        <CalculatorCard>
-            <CalculatorCardBody>
-                <CalculatorLeftSideBody
-                    profileProp={profile}
-                    calculationsResults={calculationsResults}
-                    setCalculationsResults={setCalculationsResults}
-                />
-                <CalculatorRightSideBody
-                    calc={calculationsResults}
-                />
-            </CalculatorCardBody>
-        </CalculatorCard>
-
+        <>
+            <NavBar
+                isMenu={true}
+                menuPath={'/config'}
+            />
+            <CalculatorCard>
+                <CalculatorCardBody>
+                    <CalculatorLeftSideBody
+                        profileProp={profile}
+                        calculationsResults={calculationsResults}
+                        setCalculationsResults={setCalculationsResults}
+                    />
+                    <CalculatorRightSideBody
+                        calc={calculationsResults}
+                    />
+                </CalculatorCardBody>
+            </CalculatorCard>
+        </>
     );
 }
 

@@ -1,23 +1,23 @@
 {
   "profile": {
-    "type": "profil1",
+    "type": "config1",
     "cena_za_1m_od_powierzchni_naklejki": [
       {
-        "id" : 1,
-        "wieksze_niz" : 0.0,
+        "id": 1,
+        "wieksze_niz": 0,
         "mniejsze_rowne_niz": 4.5,
-        "cena": 169.00
+        "cena": 169
       },
       {
-        "id" : 2,
-        "wieksze_niz" : 4.5,
+        "id": 2,
+        "wieksze_niz": 4.5,
         "mniejsze_rowne_niz": 9999,
-        "cena": 84.50
+        "cena": 84.5
       }
     ],
-    "cena_minimalna": 96.00,
-    "koszt_projektu": 24.00,
-    "doplata_za_sztuke": 0.0,
+    "cena_minimalna": 96,
+    "koszt_projektu": 24,
+    "doplata_za_sztuke": 0,
     "dodatki": [
       {
         "typ": "szary_klej_maskujacy",
@@ -88,8 +88,8 @@
       }
     ],
     "wymiary": {
-      "max_krotszy_bok": 134.00,
-      "max_dluzszy_bok": 999.00
+      "max_krotszy_bok": 134,
+      "max_dluzszy_bok": 999
     },
     "marginesy": {
       "szerokosc": 0.2,

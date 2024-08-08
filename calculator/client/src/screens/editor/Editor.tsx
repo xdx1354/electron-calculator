@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Form from "./form/Form";
 import {useLocation} from "react-router-dom";
 import ChooseCardHeader from "../../components/chooseActionScreenComponents/ChooseCardHeader";
+import NavBar from "../../components/NavBar/NavBar";
 
 const Screen = styled.div`
     height: 100vh;
@@ -52,14 +53,21 @@ const Editor: React.FC = () => {
     const { profile } = location.state || {};
 
     return(
-        <Screen>
-            <Card>
-                <CardBody>
-                    <CalculatorHeader color={"black"} title={"Editor"}/>
-                    <Form profile={profile}/>
-                </CardBody>
-            </Card>
-        </Screen>
+        <>
+            <NavBar
+                isMenu={true}
+                menuPath={'/browse'}
+            />
+            <Screen>
+                <Card>
+                    <CardBody>
+                        <CalculatorHeader color={"black"} title={"Editor"}/>
+                        <Form profile={profile}/>
+                    </CardBody>
+                </Card>
+            </Screen>
+        </>
+
 
     );
 }
