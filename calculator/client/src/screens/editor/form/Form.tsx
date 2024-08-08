@@ -102,6 +102,7 @@ const Form: React.FC<Props> = (props) => {
 
     const handleSave = async () => {
         let filename = formData.type.replaceAll(' ', '_');
+        console.log("FORM DATA:", formData);
         const data = { profile: formData };
         const preparedData = JSON.stringify(data);
 
