@@ -83,7 +83,7 @@ function ChooseList() {
 
     const fetchFiles = async () => {
         try {
-            const response:Response = await fetch('http://localhost:4001/files');
+            const response : Response = await fetch('http://localhost:4001/files');
 
             if(!response.ok) {
                 console.log('Error!');

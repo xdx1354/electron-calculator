@@ -3,8 +3,7 @@ import ChooseActionHero from "../../components/ChooseActionHero";
 
 function Configurator() {
     return (
-        <ChooseActionHero></ChooseActionHero>
-
+        <ChooseActionHero/>
     );
 }
 

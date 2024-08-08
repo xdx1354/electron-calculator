@@ -50,7 +50,7 @@ const getFeaturesCost = (area: number, formParams: any) => {
 
     let additionalCostPerSquareMeter: number = 0;
 
-    // finding additional features in Form JSON params and then finding their values in the Configuration JSON
+    // finding additional features in form JSON params and then finding their values in the Configuration JSON
     Object.entries(formParams).forEach(([key, value]) => {
         if (value === true && key !== "krotszy_bok" && key !== "dluzszy_bok" && key !== "ilosc_szt") {
             jsonProfileObject.dodatki.forEach((it: Dodatek) => {
