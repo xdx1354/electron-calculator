@@ -1,5 +1,5 @@
 # Electron.js Calculator
-Electron.js powered desktop app custom designed and fitted for the needs of the company.
+Electron JS powered desktop app custom designed and fitted for the needs of the company.
 
 **THIS PROJECT IS STILL IN THE DEVELOPMENT PHASE!**
 
