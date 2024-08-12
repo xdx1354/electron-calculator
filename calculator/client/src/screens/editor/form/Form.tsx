@@ -1,5 +1,5 @@
 import CustomInput from "../../../components/CustomInput";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Dodatek, Profile, RabatValue} from "../../../types/types";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
@@ -82,6 +82,14 @@ const Form: React.FC<Props> = (props) => {
 
     const [formData, setFormData] = useState<Profile>(props.profile);
 
+    const [editingFileName, setEditingFileName] = useState<string>("");
+
+    useEffect( () => {
+            if(props.profile.type) {
+                setEditingFileName(props.profile.type);
+            }
+    });
+
     const handleInputChange = (section: keyof Profile, field: string, index: number | undefined, value: any) => {
         if (index !== undefined) {
             const updatedSection = [...(formData[section] as any[])];
@@ -130,6 +138,23 @@ const Form: React.FC<Props> = (props) => {
             }
         } catch (err) {
             console.error("Error making request: ", err);
+        }
+
+        // deleting the old one if name was changed
+        if (formData.type !== editingFileName) {
+            const url = 'http://localhost:4001/delete/' + editingFileName;
+
+            try {
+                const response = await fetch(url, { method: 'DELETE' }); // Ensure method is DELETE
+                if (response.ok) {
+                    console.log("File ", filename, " deleted successfully. ", response.statusText);
+                    navigate('/editor', { state: { profile: formData } });
+                } else {
+                    console.error("Error deleting:", response.statusText);
+                }
+            } catch (err) {
+                console.error("Error deleting:", err);
+            }
         }
     };
 
@@ -188,7 +213,7 @@ const Form: React.FC<Props> = (props) => {
     return(
         <FormWrapper onSubmit={handleSubmit}>
             <EditorSection>
-                {/*<h2>Profil: {formData.type}</h2>*/}
+                <h2>Edytowany profil: {editingFileName}</h2>
                 <GridContainer3>
                     <GridItem>
                         <CustomInput
@@ -202,7 +227,6 @@ const Form: React.FC<Props> = (props) => {
                                 handleInputChange("type", "", undefined, e.target.value)
                             }
                         />
-
                     </GridItem>
                 </GridContainer3>
 
