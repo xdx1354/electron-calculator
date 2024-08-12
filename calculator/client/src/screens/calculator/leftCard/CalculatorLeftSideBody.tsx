@@ -5,8 +5,8 @@ import styled from "styled-components";
 import CustomCheckBox from "../../../components/CustomCheckBox";
 import CustomButton from "../../../components/CustomButton";
 import { Profile } from "../../../types/types";
-import {calculatePrice, setJSON} from "../calculations";
-import {CalculatorResult} from "../../../types/calcualtorResult";
+import { calculatePrice, setJSON } from "../calculations";
+import { CalculatorResult } from "../../../types/calcualtorResult";
 
 const BodyDiv = styled.div`
     display: flex;
@@ -22,7 +22,7 @@ const BodyDiv = styled.div`
     z-index: 2;
 `;
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.form`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -46,11 +46,8 @@ interface Props {
     setCalculationsResults: React.Dispatch<React.SetStateAction<CalculatorResult>>;
 }
 
-const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResults, setCalculationsResults}) => {
-
-
-    const profile:Profile = profileProp;
-
+const CalculatorLeftSideBody: React.FC<Props> = ({ profileProp, calculationsResults, setCalculationsResults }) => {
+    const [profile, setProfile] = useState<Profile>(profileProp);
     const [formState, setFormState] = useState<{ [key: string]: any }>({});
 
     useEffect(() => {
@@ -67,12 +64,8 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
         });
 
         setFormState(initialState);
-
     }, [profile]);
 
-    // useState is asynchronous and printing changed data immediately after changing it results in printing old data
-    // using useEffect helps here and prints just after the data is really changed
-    // this function is for testing purposes only
     useEffect(() => {
         console.log("Calculation results JSON: ", calculationsResults);
     }, [calculationsResults]);
@@ -86,7 +79,7 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
 
     const calculate = () => {
         console.log('Printing form data:', formState);
-        if (profile){
+        if (profile) {
             let formParams = Object.fromEntries(Object.entries(formState));
             console.log("form params as json: ", formParams);
             try {
@@ -99,20 +92,27 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
         } else {
             throw new Error("No profile found.");
         }
+    }
 
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault(); // Prevent the default form submission
+        calculate(); // Call the custom calculation function
     }
 
     return (
         <BodyDiv>
             <CalculatorHeader title={"Kalkulator"} />
-            <h3>Profil: {profile.type}</h3>
-            <FormWrapper>
+            <h3>Profil: {profileProp.type}</h3>
+            <FormWrapper onSubmit={handleSubmit}>
                 <CustomInput
                     key={"krotszy_bok"}
                     type={"number"}
                     placeholder={"wartość"}
                     label={"Krótszy bok"}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                    required={true}
+                    min={0}
+                    max={profileProp.wymiary.max_krotszy_bok}
                 />
                 <CustomInput
                     key={"dluzszy_bok"}
@@ -120,6 +120,9 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
                     placeholder={"wartość"}
                     label={"Dłuższy bok"}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("dluzszy_bok", parseFloat(e.target.value))}
+                    required={true}
+                    min={0}
+                    max={profileProp.wymiary.max_dluzszy_bok}
                 />
                 <CustomInput
                     key={"ilosc_szt"}
@@ -127,6 +130,7 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
                     placeholder={"wartość"}
                     label={"Ilość sztuk"}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("ilosc_szt", parseFloat(e.target.value))}
+                    required={true}
                 />
                 {profile?.dodatki.map((field) => (
                     <CustomCheckBox
@@ -138,9 +142,8 @@ const CalculatorLeftSideBody: React.FC<Props> = ({profileProp, calculationsResul
                     />
                 ))}
 
-
                 <ButtonWrapper>
-                    <CustomButton text={"OBLICZ"} function={calculate} />
+                    <CustomButton type={'submit'} text={"OBLICZ"} />
                 </ButtonWrapper>
             </FormWrapper>
         </BodyDiv>

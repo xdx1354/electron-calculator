@@ -37,6 +37,10 @@ const CustomInput = ({ ...props }) => {
                     defaultValue={props.defaultValue}
                     onChange={props.onChange}
                     name={props.name}
+                    required={props.required}
+                    min={props.min}
+                    max={props.max}
+                    step={props.step}
                 />
             </StyledDiv>
         </>

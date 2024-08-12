@@ -12,13 +12,14 @@ interface Props {
     function?: () => void;
     color?: string;
     text?: string;
+    type?: 'button' | 'submit' | 'reset';
 }
 
 
 const CustomButton: React.FC<Props> = ( props ) => {
     return (
         <>
-            <StyledButton onClick={props.function}>{props.text}</StyledButton>
+            <StyledButton type={props.type} onClick={props.function}>{props.text}</StyledButton>
         </>
     )
 }

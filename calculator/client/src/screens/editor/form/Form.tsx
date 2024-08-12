@@ -1,5 +1,5 @@
 import CustomInput from "../../../components/CustomInput";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Dodatek, Profile, RabatValue} from "../../../types/types";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
@@ -30,7 +30,7 @@ const GridItem = styled.div`
     padding: 1vh  1vw;
 `
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.form`
     width: 95%;
     height: 100%;
     display: flex;
@@ -72,6 +72,8 @@ const ButtonSection = styled.div`
     width: 100%;
 `
 
+type FileName = string;
+
 const Form: React.FC<Props> = (props) => {
 
     const navigate = useNavigate();
@@ -81,6 +83,15 @@ const Form: React.FC<Props> = (props) => {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = React.useState<boolean>(false);
 
     const [formData, setFormData] = useState<Profile>(props.profile);
+
+    const [editingFileName, setEditingFileName] = useState<string>("");
+    const [filesList, setFilesList] = useState<FileName[]>([]);
+
+    useEffect( () => {
+            if(props.profile.type) {
+                setEditingFileName(props.profile.type);
+            }
+    });
 
     const handleInputChange = (section: keyof Profile, field: string, index: number | undefined, value: any) => {
         if (index !== undefined) {
@@ -99,6 +110,12 @@ const Form: React.FC<Props> = (props) => {
             }
         }
     };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault(); // Prevent the default form submission
+        await fetchFiles().then(openSaveModal);
+        // openSaveModal();
+    }
 
     const handleSave = async () => {
         let filename = formData.type.replaceAll(' ', '_');
@@ -126,6 +143,23 @@ const Form: React.FC<Props> = (props) => {
         } catch (err) {
             console.error("Error making request: ", err);
         }
+
+        // deleting the old one if name was changed
+        if (formData.type !== editingFileName) {
+            const url = 'http://localhost:4001/delete/' + editingFileName;
+
+            try {
+                const response = await fetch(url, { method: 'DELETE' }); // Ensure method is DELETE
+                if (response.ok) {
+                    console.log("File ", filename, " deleted successfully. ", response.statusText);
+                    navigate('/editor', { state: { profile: formData } });
+                } else {
+                    console.error("Error deleting:", response.statusText);
+                }
+            } catch (err) {
+                console.error("Error deleting:", err);
+            }
+        }
     };
 
     const handleDelete = async () => {
@@ -145,6 +179,23 @@ const Form: React.FC<Props> = (props) => {
         }
     }
 
+    const fetchFiles = async () => {
+        try {
+            const response : Response = await fetch('http://localhost:4001/files');
+
+            if(!response.ok) {
+                console.log('Error!');
+            }
+
+            const data = await response.json(); // parsing response to JSON
+            console.log(data);
+            setFilesList(data.files);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     const openSaveModal = () => setIsModalSaveOpen(true);
     const closeSaveModal = () => setIsModalSaveOpen(false);
@@ -158,6 +209,7 @@ const Form: React.FC<Props> = (props) => {
     const handleConfirmSave = () => {
         handleSave().then(closeSaveModal);
     };
+
     const handleConfirmExit = () => {
         closeExitModal();
         navigate('/browse');
@@ -179,10 +231,18 @@ const Form: React.FC<Props> = (props) => {
         }
     }
 
+    const isFilenameValid = () => {
+        if(formData.type === editingFileName) {
+            return true;
+        }
+        let filename :FileName = formData.type.replaceAll(' ', '_') + ".json";
+        return !filesList.find(item => item === filename);
+    }
+
     return(
-        <FormWrapper>
+        <FormWrapper onSubmit={handleSubmit}>
             <EditorSection>
-                {/*<h2>Profil: {formData.type}</h2>*/}
+                <h2>Edytowany profil: {editingFileName.replaceAll('_', ' ')}</h2>
                 <GridContainer3>
                     <GridItem>
                         <CustomInput
@@ -190,12 +250,12 @@ const Form: React.FC<Props> = (props) => {
                             type="text"
                             placeholder="tekst"
                             label="Nazwa"
-                            defaultValue={props?.profile?.type}
+                            defaultValue={props?.profile?.type.replaceAll('_', ' ')}
+                            required={true}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("type", "", undefined, e.target.value)
                             }
                         />
-
                     </GridItem>
                 </GridContainer3>
 
@@ -211,6 +271,9 @@ const Form: React.FC<Props> = (props) => {
                             placeholder={"wartość"}
                             label={"Cena minimalna netto"}
                             defaultValue={props?.profile?.cena_minimalna}
+                            required={true}
+                            step={0.01}
+                            min={0}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_minimalna", "", undefined, parseFloat(e.target.value))
                             }
@@ -224,6 +287,9 @@ const Form: React.FC<Props> = (props) => {
                             placeholder={"wartość"}
                             label={"Koszt projektu"}
                             defaultValue={props?.profile?.koszt_projektu}
+                            required={true}
+                            step={0.01}
+                            min={0}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("koszt_projektu", "", undefined, parseFloat(e.target.value))
                             }
@@ -237,6 +303,9 @@ const Form: React.FC<Props> = (props) => {
                             placeholder={"wartość"}
                             label={"Dopłata za sztukę"}
                             defaultValue={props.profile?.doplata_za_sztuke}
+                            required={true}
+                            step={0.01}
+                            min={0}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("doplata_za_sztuke", "", undefined, parseFloat(e.target.value))
                             }
@@ -257,7 +326,10 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Max szerokość krótszego boku"}
-                            defaultValue={props.profile.wymiary.max_krotszy_bok}
+                            defaultValue={props?.profile?.wymiary.max_krotszy_bok}
+                            required={true}
+                            step={0.01}
+                            min={0.01} //TODO: check the value!
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("wymiary", "max_krotszy_bok", undefined, parseFloat(e.target.value))
                             }
@@ -270,7 +342,10 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Margines na stronę poziom"}
-                            defaultValue={props.profile.marginesy.szerokosc}
+                            defaultValue={props?.profile?.marginesy.szerokosc}
+                            required={true}
+                            step={0.01}
+                            min={0} // TODO: check value
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("marginesy", "szerokosc", undefined, parseFloat(e.target.value))
                             }
@@ -283,7 +358,10 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Margines na stronę pion"}
-                            defaultValue={props.profile.marginesy.wysokosc}
+                            defaultValue={props.profile?.marginesy.wysokosc}
+                            required={true}
+                            step={0.01}
+                            min={0.0} // TODO: check value
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("marginesy", "wysokosc", undefined, parseFloat(e.target.value))
                             }
@@ -305,7 +383,9 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki od (wyłącznie)"}
-                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[0].wieksze_niz}
+                            defaultValue={props?.profile?.cena_za_1m_od_powierzchni_naklejki[0]?.wieksze_niz}
+                            required={true}
+                            min={0}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_za_1m_od_powierzchni_naklejki", "wieksze_niz", 0, parseFloat(e.target.value))
                             }
@@ -317,7 +397,10 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki do (włącznie)"}
-                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[0].mniejsze_rowne_niz}
+                            defaultValue={props?.profile?.cena_za_1m_od_powierzchni_naklejki[0]?.mniejsze_rowne_niz}
+                            required={true}
+                            step={0.01}
+                            min={0}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_za_1m_od_powierzchni_naklejki", "mniejsze_rowne_niz", 0, parseFloat(e.target.value))
                             }
@@ -329,7 +412,10 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"cena za metr kwadratowy"}
-                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[0].cena}
+                            defaultValue={props?.profile?.cena_za_1m_od_powierzchni_naklejki[0]?.cena}
+                            required={true}
+                            step={0.01}
+                            min={0}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_za_1m_od_powierzchni_naklejki", "cena", 0, parseFloat(e.target.value))
                             }
@@ -342,7 +428,7 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki od (wyłącznie)"}
-                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[1].wieksze_niz}
+                            defaultValue={props?.profile?.cena_za_1m_od_powierzchni_naklejki[1]?.wieksze_niz}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_za_1m_od_powierzchni_naklejki", "wieksze_niz", 1, parseFloat(e.target.value))
                             }
@@ -354,7 +440,7 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"Powierzchnia naklejki do (włącznie)"}
-                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[1].mniejsze_rowne_niz}
+                            defaultValue={props?.profile?.cena_za_1m_od_powierzchni_naklejki[1]?.mniejsze_rowne_niz}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_za_1m_od_powierzchni_naklejki", "mniejsze_rowne_niz", 1, parseFloat(e.target.value))
                             }
@@ -366,7 +452,7 @@ const Form: React.FC<Props> = (props) => {
                             type={"number"}
                             placeholder={"wartość"}
                             label={"cena za metr kwadratowy"}
-                            defaultValue={props.profile.cena_za_1m_od_powierzchni_naklejki[1].cena}
+                            defaultValue={props?.profile?.cena_za_1m_od_powierzchni_naklejki[1]?.cena}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("cena_za_1m_od_powierzchni_naklejki", "cena", 1, parseFloat(e.target.value))
                             }
@@ -380,7 +466,7 @@ const Form: React.FC<Props> = (props) => {
             <EditorSection>
                 <h2>Dodatki</h2>
                 <GridContainer3>
-                    {formData.dodatki.map((dodatek, index: number) => (
+                    {formData?.dodatki?.map((dodatek, index: number) => (
                         <>
                             <GridItem>
                                 <CustomInput
@@ -389,6 +475,7 @@ const Form: React.FC<Props> = (props) => {
                                     placeholder={"wartość"}
                                     label={"Nazwa dodatkowej opcji"}
                                     defaultValue={props.profile?.dodatki?.[index]?.typ.replaceAll('_', " ")}
+                                    required={true}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("dodatki", "typ", index, e.target.value)
                                     }
@@ -402,6 +489,8 @@ const Form: React.FC<Props> = (props) => {
                                     placeholder={"wartość"}
                                     label={"Cena za 1m kwadratowy"}
                                     defaultValue={props.profile?.dodatki?.[index]?.dodatkowo_za_1m}
+                                    required={true}
+                                    min={0}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("dodatki", "dodatkowo_za_1m", index, parseFloat(e.target.value))
                                     }
@@ -415,6 +504,8 @@ const Form: React.FC<Props> = (props) => {
                                     placeholder={"wartość"}
                                     label={"Kwota do ceny minimalnej"}
                                     defaultValue={props.profile?.dodatki?.[index]?.dodatkowo_do_ceny_minimalnej}
+                                    required={true}
+                                    min={0}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("dodatki", "dodatkowo_do_ceny_minimalnej", index, parseFloat(e.target.value))
                                     }
@@ -434,7 +525,7 @@ const Form: React.FC<Props> = (props) => {
                 <h2>Rabatowanie</h2>
                 <GridContainer2>
 
-                    {formData.rabat.map((rabat, index: number) => (
+                    {formData?.rabat?.map((rabat, index: number) => (
                         <>
                             <GridItem>
                                 <CustomInput
@@ -443,6 +534,7 @@ const Form: React.FC<Props> = (props) => {
                                     placeholder={"wartość"}
                                     label={"Powierzchnia zamównienia od:"}
                                     defaultValue={props.profile?.rabat?.[index]?.wieksze_rowne}
+                                    min={0}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("rabat", "wieksze_rowne", index, parseFloat(e.target.value))
                                     }
@@ -454,6 +546,7 @@ const Form: React.FC<Props> = (props) => {
                                     type={"number"}
                                     placeholder={"wartość"}
                                     label={"Rabat w procentach"}
+                                    min={0}
                                     defaultValue={props.profile?.rabat?.[index]?.rabat_procenty}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("rabat", "rabat_procenty", index, parseFloat(e.target.value))
@@ -472,13 +565,15 @@ const Form: React.FC<Props> = (props) => {
             <HorizontalLine/>
             <ButtonSection>
                 <ButtonWrapper>
-                    <CustomButton text="ZAPISZ" function={openSaveModal}/>
+                    <CustomButton type="submit" text="ZAPISZ"/>
                     <ModalComponent
                         isOpen={isModalSaveOpen}
                         onRequestClose={closeSaveModal}
                         title="Confirm Action"
                         onConfirm={handleConfirmSave}
                     >
+                        {isFilenameValid() ? <p>Saving won't affect any other files!</p> :
+                            <p>THIS NAME IS ALREADY TAKEN!!!</p>}
                         <p>Do you want to proceed with this action?</p>
                     </ModalComponent>
                 </ButtonWrapper>
@@ -509,7 +604,6 @@ const Form: React.FC<Props> = (props) => {
             </ButtonSection>
 
         </FormWrapper>
-
     );
 }
 

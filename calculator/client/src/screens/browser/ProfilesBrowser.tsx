@@ -1,5 +1,5 @@
 import CalculatorHeader from "../../components/CalculatorHeader";
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 import CardsContainer from "./profilesList/CardsContainer";
 import CustomButton from "../../components/CustomButton";
@@ -52,15 +52,25 @@ const HeaderWrapper = styled.div`
     height: 15vh;
 `
 
+type FileName = string;
 
 const ProfilesBrowser: React.FC = () => {
 
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [newName, setName] = React.useState("");
+    const [filesList, setFilesList] = React.useState<FileName[]>([]);
+    const [badFileName, setBadFileName] = React.useState<boolean>();
 
-    const handleConfirm = () => handleAddNewProfile();
+    const handleConfirm = () => {
+        if(!badFileName){
+            handleAddNewProfile();
+        }
+    }
     const closeModal = () => setIsModalOpen(false);
-    const openModal = () => setIsModalOpen(true);
+    const openModal = async () => {
+        await fetchFiles();
+        setIsModalOpen(true);
+    }
 
     const handleAddNewProfile = async () => {
 
@@ -106,7 +116,7 @@ const ProfilesBrowser: React.FC = () => {
                 "wysokosc": 0
             }
         }
-        let filename = newName;
+        let filename = newName.replaceAll(' ', '_');
         mockData.type = filename;
         const data = {profile: mockData};
         console.log("New Profile: ", data);
@@ -136,6 +146,39 @@ const ProfilesBrowser: React.FC = () => {
         window.location.reload();
 };
 
+    const fetchFiles = async () => {
+        try {
+            const response : Response = await fetch('http://localhost:4001/files');
+
+            if(!response.ok) {
+                console.log('Error!');
+            }
+
+            const data = await response.json(); // parsing response to JSON
+            console.log(data);
+            setFilesList(data.files);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const isFilenameValid = () => {
+        let filename :FileName = newName.replaceAll(' ', '_') + ".json";
+        console.log('Checking if:', filename,' is valid!');
+        return !filesList.find(item => item === filename);
+    }
+
+    useEffect(()=> {
+        if(isFilenameValid()) {
+            setBadFileName(false);
+            console.log('valid!');
+        } else {
+            setBadFileName(true);
+            console.log('INVALID')
+        }
+    },[newName])
+
     return(
         <>
             <NavBar
@@ -155,6 +198,7 @@ const ProfilesBrowser: React.FC = () => {
                             >
                                 <div>
                                     <p>Czy chcesz dodać nowy profil? Podaj unikalną nazwę!</p>
+                                    {badFileName?<p>TA NAZWA JEST JUŻ UŻYTA! WYBIERZ INNĄ!</p>:<p>Podana nazwa jest dostępna</p>}
                                         <CustomInput
                                             key="name"
                                             placeholder="text"
