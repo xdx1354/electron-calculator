@@ -72,6 +72,8 @@ const ButtonSection = styled.div`
     width: 100%;
 `
 
+type FileName = string;
+
 const Form: React.FC<Props> = (props) => {
 
     const navigate = useNavigate();
@@ -83,6 +85,7 @@ const Form: React.FC<Props> = (props) => {
     const [formData, setFormData] = useState<Profile>(props.profile);
 
     const [editingFileName, setEditingFileName] = useState<string>("");
+    const [filesList, setFilesList] = useState<FileName[]>([]);
 
     useEffect( () => {
             if(props.profile.type) {
@@ -108,9 +111,10 @@ const Form: React.FC<Props> = (props) => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Prevent the default form submission
-        openSaveModal();
+        await fetchFiles().then(openSaveModal);
+        // openSaveModal();
     }
 
     const handleSave = async () => {
@@ -175,6 +179,24 @@ const Form: React.FC<Props> = (props) => {
         }
     }
 
+    const fetchFiles = async () => {
+        try {
+            const response : Response = await fetch('http://localhost:4001/files');
+
+            if(!response.ok) {
+                console.log('Error!');
+                throw new Error('Failed to fetch config');
+            }
+
+            const data = await response.json(); // parsing response to JSON
+            console.log(data);
+            setFilesList(data.files);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     const openSaveModal = () => setIsModalSaveOpen(true);
     const closeSaveModal = () => setIsModalSaveOpen(false);
@@ -208,6 +230,14 @@ const Form: React.FC<Props> = (props) => {
             const newDodatek: Dodatek = { typ: "", dodatkowo_za_1m: 0, dodatkowo_do_ceny_minimalnej: 0 };
             setFormData({...formData, dodatki: [...formData.dodatki, newDodatek]});
         }
+    }
+
+    const isFilenameValid = () => {
+        if(formData.type === editingFileName) {
+            return true;
+        }
+        let filename :FileName = formData.type.replaceAll(' ', '_') + ".json";
+        return !filesList.find(item => item === filename);
     }
 
     return(
@@ -543,6 +573,8 @@ const Form: React.FC<Props> = (props) => {
                         title="Confirm Action"
                         onConfirm={handleConfirmSave}
                     >
+                        {isFilenameValid() ? <p>Saving won't affect any other files!</p> :
+                            <p>THIS NAME IS ALREADY TAKEN!!!</p>}
                         <p>Do you want to proceed with this action?</p>
                     </ModalComponent>
                 </ButtonWrapper>
@@ -573,7 +605,6 @@ const Form: React.FC<Props> = (props) => {
             </ButtonSection>
 
         </FormWrapper>
-
     );
 }
 
