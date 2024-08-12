@@ -481,6 +481,7 @@ const Form: React.FC<Props> = (props) => {
                                     placeholder={"wartość"}
                                     label={"Powierzchnia zamównienia od:"}
                                     defaultValue={props.profile?.rabat?.[index]?.wieksze_rowne}
+                                    min={0}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("rabat", "wieksze_rowne", index, parseFloat(e.target.value))
                                     }
@@ -492,6 +493,7 @@ const Form: React.FC<Props> = (props) => {
                                     type={"number"}
                                     placeholder={"wartość"}
                                     label={"Rabat w procentach"}
+                                    min={0}
                                     defaultValue={props.profile?.rabat?.[index]?.rabat_procenty}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                         handleInputChange("rabat", "rabat_procenty", index, parseFloat(e.target.value))

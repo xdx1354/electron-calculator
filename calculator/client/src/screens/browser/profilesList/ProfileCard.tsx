@@ -4,6 +4,7 @@ import CustomButton from "../../../components/CustomButton";
 import {JsonResponse} from "../../../types/types";
 import {useNavigate} from "react-router-dom";
 import ModalComponent from "../../../components/modal/Modal";
+import CustomInput from "../../../components/CustomInput";
 
 const Card = styled.div`
     display: flex;
@@ -45,17 +46,56 @@ type Props = {
 
 const ProfileCard: React.FC<Props> = (props) => {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = React.useState<boolean>(false);
+    const [isModalCopyOpen, setIsModalCopyOpen] = React.useState<boolean>(false);
+    const [newName, setName] = React.useState<string>("");
+
 
     const navigate = useNavigate();
 
     const openDeleteModal = () => setIsModalDeleteOpen(true);
     const closeDeleteModal = () => setIsModalDeleteOpen(false);
 
+    const openCopyModal = () => setIsModalCopyOpen(true);
+    const closeCopyModal = () => setIsModalCopyOpen(false);
+
     const handleConfirmDelete = () => {
         console.log('About to delete a file!');
         handleDelete().then(closeDeleteModal).catch(console.error);
         window.location.reload();
     }
+
+    const handleCopyProfile = async () => {
+
+        const newProfile = await props.fetchConfig();
+
+        let filename = newName;
+        newProfile.profile.type = filename;
+        console.log("New Profile: ", newProfile);
+
+        //saving
+        const preparedData = JSON.stringify(newProfile);
+
+        try {
+            const response = await fetch('http://localhost:4001/save/' + filename, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: preparedData
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                console.log("Server response: ", result);
+            } else {
+                console.error("Error saving config:", response.statusText);
+            }
+        } catch (err) {
+            console.error("Error making request: ", err);
+        }
+        closeCopyModal();
+        window.location.reload();
+    };
 
     const getName = () => {
         return props.name.substring(0, props.name.length - 5);
@@ -102,6 +142,9 @@ const ProfileCard: React.FC<Props> = (props) => {
                 <ButtonWrapper>
                     <CustomButton text="DELETE" function={openDeleteModal} />
                 </ButtonWrapper>
+                <ButtonWrapper>
+                    <CustomButton text="COPY" function={openCopyModal}/>
+                </ButtonWrapper>
             </ButtonSection>
 
             <ModalComponent
@@ -112,6 +155,28 @@ const ProfileCard: React.FC<Props> = (props) => {
             >
                 <p>Czy chcesz usunąć ten plik? </p>
             </ModalComponent>
+
+
+            <ModalComponent
+                isOpen={isModalCopyOpen}
+                onRequestClose={closeCopyModal}
+                title="Confirm Action"
+                onConfirm={handleCopyProfile}
+            >
+                <div>
+                    <p>Czy chcesz dodać nowy profil? Podaj unikalną nazwę!</p>
+                    <CustomInput
+                        key="name"
+                        placeholder="text"
+                        type="text"
+                        defaultValue={newName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setName(e.target.value)
+                        }
+                    />
+                </div>
+            </ModalComponent>
+
         </Card>
     )
 }

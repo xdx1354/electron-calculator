@@ -66,6 +66,10 @@ const CardsContainer: React.FC = () => {
         }
     }
 
+    const copyProfile = () => {
+
+    }
+
 
     return(
         <CardsWrapper>
