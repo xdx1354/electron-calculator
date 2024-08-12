@@ -40,6 +40,7 @@ const CustomInput = ({ ...props }) => {
                     required={props.required}
                     min={props.min}
                     max={props.max}
+                    step={props.step}
                 />
             </StyledDiv>
         </>

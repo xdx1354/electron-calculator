@@ -112,7 +112,7 @@ const CalculatorLeftSideBody: React.FC<Props> = ({ profileProp, calculationsResu
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
                     required={true}
                     min={0}
-                    max={134}
+                    max={profileProp.wymiary.max_krotszy_bok}
                 />
                 <CustomInput
                     key={"dluzszy_bok"}
@@ -122,7 +122,7 @@ const CalculatorLeftSideBody: React.FC<Props> = ({ profileProp, calculationsResu
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("dluzszy_bok", parseFloat(e.target.value))}
                     required={true}
                     min={0}
-                    max={9999}
+                    max={profileProp.wymiary.max_dluzszy_bok}
                 />
                 <CustomInput
                     key={"ilosc_szt"}
