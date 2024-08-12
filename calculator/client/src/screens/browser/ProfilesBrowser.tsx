@@ -1,5 +1,5 @@
 import CalculatorHeader from "../../components/CalculatorHeader";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 import CardsContainer from "./profilesList/CardsContainer";
 import CustomButton from "../../components/CustomButton";
@@ -116,7 +116,7 @@ const ProfilesBrowser: React.FC = () => {
                 "wysokosc": 0
             }
         }
-        let filename = newName;
+        let filename = newName.replaceAll(' ', '_');
         mockData.type = filename;
         const data = {profile: mockData};
         console.log("New Profile: ", data);
@@ -152,7 +152,6 @@ const ProfilesBrowser: React.FC = () => {
 
             if(!response.ok) {
                 console.log('Error!');
-                throw new Error('Failed to fetch config');
             }
 
             const data = await response.json(); // parsing response to JSON

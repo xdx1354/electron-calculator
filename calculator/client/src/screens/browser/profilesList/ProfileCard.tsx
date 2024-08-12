@@ -112,7 +112,7 @@ const ProfileCard: React.FC<Props> = (props) => {
     };
 
     const getName = () => {
-        return props.name.substring(0, props.name.length - 5);
+        return props.name.substring(0, props.name.length - 5).replaceAll('_',' ');
     }
 
     const handleEditClick = async () => {

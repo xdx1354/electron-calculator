@@ -185,7 +185,6 @@ const Form: React.FC<Props> = (props) => {
 
             if(!response.ok) {
                 console.log('Error!');
-                throw new Error('Failed to fetch config');
             }
 
             const data = await response.json(); // parsing response to JSON
@@ -243,7 +242,7 @@ const Form: React.FC<Props> = (props) => {
     return(
         <FormWrapper onSubmit={handleSubmit}>
             <EditorSection>
-                <h2>Edytowany profil: {editingFileName}</h2>
+                <h2>Edytowany profil: {editingFileName.replaceAll('_', ' ')}</h2>
                 <GridContainer3>
                     <GridItem>
                         <CustomInput
@@ -251,7 +250,7 @@ const Form: React.FC<Props> = (props) => {
                             type="text"
                             placeholder="tekst"
                             label="Nazwa"
-                            defaultValue={props?.profile?.type}
+                            defaultValue={props?.profile?.type.replaceAll('_', ' ')}
                             required={true}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 handleInputChange("type", "", undefined, e.target.value)
