@@ -62,7 +62,7 @@ const ProfilesBrowser: React.FC = () => {
     const [badFileName, setBadFileName] = React.useState<boolean>();
 
     const handleConfirm = () => {
-        if(!badFileName){
+        if(!badFileName && newName.length > 0){
             handleAddNewProfile();
         }
     }
@@ -116,6 +116,7 @@ const ProfilesBrowser: React.FC = () => {
                 "wysokosc": 0
             }
         }
+
         let filename = newName.replaceAll(' ', '_');
         mockData.type = filename;
         const data = {profile: mockData};
@@ -164,6 +165,9 @@ const ProfilesBrowser: React.FC = () => {
     }
 
     const isFilenameValid = () => {
+        if( newName.length == 0) {
+            return false;
+        }
         let filename :FileName = newName.replaceAll(' ', '_') + ".json";
         console.log('Checking if:', filename,' is valid!');
         return !filesList.find(item => item === filename);
@@ -193,12 +197,12 @@ const ProfilesBrowser: React.FC = () => {
                             <ModalComponent
                                 isOpen={isModalOpen}
                                 onRequestClose={closeModal}
-                                title="Confirm Action"
+                                title="Dodawanie profilu"
                                 onConfirm={handleConfirm}
                             >
                                 <div>
                                     <p>Czy chcesz dodać nowy profil? Podaj unikalną nazwę!</p>
-                                    {badFileName?<p>TA NAZWA JEST JUŻ UŻYTA! WYBIERZ INNĄ!</p>:<p>Podana nazwa jest dostępna</p>}
+                                    {badFileName?<p><b>TA NAZWA JEST BŁĘDNA LUB JUŻ UŻYTA</b></p>:<p><b>Podana nazwa jest dostępna</b></p>}
                                         <CustomInput
                                             key="name"
                                             placeholder="text"
