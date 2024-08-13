@@ -1,0 +1,43 @@
+{
+  "profile": {
+    "type": "to_jest_nazwa",
+    "cena_za_1m_od_powierzchni_naklejki": [
+      {
+        "id": 1,
+        "wieksze_niz": 0,
+        "mniejsze_rowne_niz": 0,
+        "cena": 0
+      },
+      {
+        "id": 2,
+        "wieksze_niz": 0,
+        "mniejsze_rowne_niz": 0,
+        "cena": 0
+      }
+    ],
+    "cena_minimalna": 0,
+    "koszt_projektu": 0,
+    "doplata_za_sztuke": 0,
+    "dodatki": [
+      {
+        "typ": "szary_klej_maskujacy",
+        "dodatkowo_za_1m": 0,
+        "dodatkowo_do_ceny_minimalnej": 0
+      }
+    ],
+    "rabat": [
+      {
+        "wieksze_rowne": 0,
+        "rabat_procenty": 0
+      }
+    ],
+    "wymiary": {
+      "max_krotszy_bok": 0,
+      "max_dluzszy_bok": 0
+    },
+    "marginesy": {
+      "szerokosc": 0,
+      "wysokosc": 0
+    }
+  }
+}

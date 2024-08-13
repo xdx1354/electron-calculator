@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "start": "concurrently \"npm run client\" ",
-    "server": "cd server && node server.js",
+    "server": "cd legacy/server && node server.js",
     "client": "cd client && npm start",
     "electron": "concurrently \"wait-on http://localhost:3000 && electron .\" \"npm run start\"",
     "build": "cd client && npm run build"
