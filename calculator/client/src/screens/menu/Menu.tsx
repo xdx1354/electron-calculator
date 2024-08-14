@@ -59,6 +59,7 @@ const Menu: React.FC = () => {
                     <CardBody>
                         <CalculatorHeader color={"black"} title={"Menu"}/>
                         <CustomButton text="Kalkulator" function={() => navigate("/config")}/>
+                        <CustomButton text="Odwrotny Kalkulator" function={() => navigate("/config-reversed")}/>
                         <CustomButton text="Edycja profili" function={() => navigate("/browse")}/>
                     </CardBody>
                 </Card>

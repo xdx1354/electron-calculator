@@ -62,7 +62,7 @@ function Calculator() {
         <>
             <NavBar
                 isMenu={true}
-                menuPath={'/config'}
+                menuPath={'/config-reversed'}
             />
             <CalculatorCard>
                 <CalculatorCardBody>
