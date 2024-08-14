@@ -7,6 +7,8 @@ import CustomButton from "../../../components/CustomButton";
 import { Profile } from "../../../types/types";
 import { calculatePrice, setJSON } from "../calculations";
 import { CalculatorResult } from "../../../types/calcualtorResult";
+import ModalComponent from "../../../components/modal/Modal";
+import {useNavigate} from "react-router-dom";
 
 const BodyDiv = styled.div`
     display: flex;
@@ -50,8 +52,20 @@ const CalculatorLeftSideBody: React.FC<Props> = ({ profileProp, calculationsResu
     const [profile, setProfile] = useState<Profile>(profileProp);
     const [formState, setFormState] = useState<{ [key: string]: any }>({});
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const navigate = useNavigate();
+
+    const onModalReject = () => {
+        setIsModalOpen(false);
+        navigate('/browse');
+    }
+
     useEffect(() => {
         setJSON(profile);
+
+        validateProfile()?console.log('Profile valid'):setIsModalOpen(true);
+
 
         const initialState: { [key: string]: any } = {};
 
@@ -69,6 +83,13 @@ const CalculatorLeftSideBody: React.FC<Props> = ({ profileProp, calculationsResu
     useEffect(() => {
         console.log("Calculation results JSON: ", calculationsResults);
     }, [calculationsResults]);
+
+
+    const validateProfile = () => {
+        return !!(profile.marginesy.wysokosc && profile.marginesy.szerokosc && profile.cena_minimalna && profile.koszt_projektu
+            && profile.cena_za_1m_od_powierzchni_naklejki && profile.wymiary.max_dluzszy_bok && profile.wymiary.max_krotszy_bok
+            && profile.cena_minimalna && profile.type);
+    }
 
     const handleChange = (id: string, value: any) => {
         setFormState(prevState => ({
@@ -100,54 +121,67 @@ const CalculatorLeftSideBody: React.FC<Props> = ({ profileProp, calculationsResu
     }
 
     return (
-        <BodyDiv>
-            <CalculatorHeader title={"Kalkulator"} />
-            <h3>Profil: {profileProp.type}</h3>
-            <FormWrapper onSubmit={handleSubmit}>
-                <CustomInput
-                    key={"krotszy_bok"}
-                    type={"number"}
-                    placeholder={"wartość"}
-                    label={"Krótszy bok"}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
-                    required={true}
-                    min={0}
-                    max={profileProp.wymiary.max_krotszy_bok}
-                />
-                <CustomInput
-                    key={"dluzszy_bok"}
-                    type={"number"}
-                    placeholder={"wartość"}
-                    label={"Dłuższy bok"}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("dluzszy_bok", parseFloat(e.target.value))}
-                    required={true}
-                    min={0}
-                    max={profileProp.wymiary.max_dluzszy_bok}
-                />
-                <CustomInput
-                    key={"ilosc_szt"}
-                    type={"number"}
-                    placeholder={"wartość"}
-                    label={"Ilość sztuk"}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("ilosc_szt", parseFloat(e.target.value))}
-                    required={true}
-                />
-                {profile?.dodatki.map((field) => (
-                    <CustomCheckBox
-                        key={field.typ}
-                        type="checkbox"
-                        label={field.typ.replace(/_/g, ' ')}
-                        checked={formState[field.typ]}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(field.typ, e.target.checked)}
-                    />
-                ))}
+        <>
+            <BodyDiv>
 
-                <ButtonWrapper>
-                    <CustomButton type={'submit'} text={"OBLICZ"} />
-                </ButtonWrapper>
-            </FormWrapper>
-        </BodyDiv>
-    );
+                <CalculatorHeader title={"Kalkulator"} />
+                <h3>Profil: {profileProp.type}</h3>
+                <FormWrapper onSubmit={handleSubmit}>
+                    <CustomInput
+                        key={"krotszy_bok"}
+                        type={"number"}
+                        placeholder={"wartość"}
+                        label={"Krótszy bok"}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("krotszy_bok", parseFloat(e.target.value))}
+                        required={true}
+                        min={0}
+                        max={profileProp.wymiary.max_krotszy_bok}
+                    />
+                    <CustomInput
+                        key={"dluzszy_bok"}
+                        type={"number"}
+                        placeholder={"wartość"}
+                        label={"Dłuższy bok"}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("dluzszy_bok", parseFloat(e.target.value))}
+                        required={true}
+                        min={0}
+                        max={profileProp.wymiary.max_dluzszy_bok}
+                    />
+                    <CustomInput
+                        key={"ilosc_szt"}
+                        type={"number"}
+                        placeholder={"wartość"}
+                        label={"Ilość sztuk"}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("ilosc_szt", parseFloat(e.target.value))}
+                        required={true}
+                    />
+                    {profile?.dodatki.map((field) => (
+                        <CustomCheckBox
+                            key={field.typ}
+                            type="checkbox"
+                            label={field.typ.replace(/_/g, ' ')}
+                            checked={formState[field.typ]}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(field.typ, e.target.checked)}
+                        />
+                    ))}
+
+                    <ButtonWrapper>
+                        <CustomButton type={'submit'} text={"OBLICZ"} />
+                    </ButtonWrapper>
+                </FormWrapper>
+
+            </BodyDiv>
+
+            <ModalComponent
+                isOpen={isModalOpen}
+                onRequestClose={() => onModalReject()}
+                title="Czy chcesz kontynuować?"
+                onConfirm={() => setIsModalOpen(false)}
+            >
+                <p>Wykryto błąd w profilu. Zweryfikuj poprawność w edytorze profili. Działanie tego profilu może być nieprzewidziane</p>
+            </ModalComponent>
+        </>
+);
 }
 
 export default CalculatorLeftSideBody;

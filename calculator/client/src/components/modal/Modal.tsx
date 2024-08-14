@@ -53,6 +53,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    zIndex: 999
                 },
                 content: {
                     width: '30vw',
