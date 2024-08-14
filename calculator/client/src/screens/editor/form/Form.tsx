@@ -121,6 +121,7 @@ const Form: React.FC<Props> = (props) => {
         let filename = formData.type.replaceAll(' ', '_');
         console.log("FORM DATA:", formData);
         const data = { profile: formData };
+        data.profile.rabat.sort((a, b) => {return a.wieksze_rowne - b.wieksze_rowne});
         const preparedData = JSON.stringify(data);
 
         console.log("Prepared dataaa: ", preparedData, "\n filename: ", filename);
