@@ -1,14 +1,27 @@
-import React from 'react';
+import React, {createContext, useState} from 'react';
 import ChooseActionHero from "../../components/ChooseActionHero";
 import NavBar from "../../components/NavBar/NavBar";
 
-function Configurator() {
+type ConfiguratorProps = {
+    next: string;
+}
+
+export const ConfiguratorContext = React.createContext<string|null>(null);
+
+
+
+const Configurator:React.FC<ConfiguratorProps> = (props) => {
+
+    const [next, setNext] = useState<string>(props.next);
+
     return (
         <>
             <NavBar
                 isMenu={false}
             />
-            <ChooseActionHero/>
+            <ConfiguratorContext.Provider value={next}>
+                <ChooseActionHero/>
+            </ConfiguratorContext.Provider>
         </>
     );
 }

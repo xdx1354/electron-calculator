@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import {JsonResponse, Profile} from "../../types/types";
+import {ConfiguratorContext} from "../../screens/configurator/Configurator";
 
 
 const FormDiv = styled.form`
@@ -75,6 +76,7 @@ function ChooseList() {
     const [configsList, setConfigsList] = useState<FileName[]>([]);
     const [selectedProfile, setSelectedProfile] = useState<string>("");
     const navigate = useNavigate();
+    const next = useContext(ConfiguratorContext);
 
     // on component mount it should download the list of config files stored
     useEffect(() => {
@@ -126,7 +128,9 @@ function ChooseList() {
             const fetchedConfig= await fetchConfig(selectedProfile + '.json');
             console.log('CONFIG:', fetchedConfig); // Should log the updated config
 
-            navigate('/calculator', { state: { profile: fetchedConfig.profile } });
+            let path : string = next?next:"/config";
+
+            navigate(path, { state: { profile: fetchedConfig.profile } });
         } catch (error) {
             console.error('Error navigating:', error);
         }
