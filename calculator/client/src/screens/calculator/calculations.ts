@@ -11,12 +11,21 @@ const setJSON = (jsonProfile: Profile ) => {
 
 // returns area as square meters instead of centimeters like the given input
 const getArea = (longerEdge:number, shorterEdge: number, quantity: number) => {
+
+    return ( getAreaOfOneSticker(longerEdge, shorterEdge) * quantity )
+}
+
+const getAreaOfOneSticker = (longerEdge:number, shorterEdge: number) => {
     let widthWithMargins =  jsonProfileObject.marginesy.szerokosc * 2 + longerEdge;
     let heightWithMargins =  jsonProfileObject.marginesy.wysokosc * 2 + shorterEdge;
-    return (widthWithMargins * heightWithMargins * quantity) / 10000;
+    return (widthWithMargins * heightWithMargins) / 10000;
 }
 
 const getBasePrice = (area: number) :number => {
+    return area * getSquareMeterCost(area);
+}
+
+const getSquareMeterCost = (area: number) => {
     let pricePerSquareMeter: number | undefined;
 
     jsonProfileObject.cena_za_1m_od_powierzchni_naklejki.forEach((item:PriceThreshold) => {
@@ -30,7 +39,7 @@ const getBasePrice = (area: number) :number => {
         throw new Error("No valid price for this area was found!");
     }
 
-    return area * pricePerSquareMeter;
+    return pricePerSquareMeter;
 }
 
 const getDiscount = (area: number): number => {
@@ -46,8 +55,7 @@ const getDiscount = (area: number): number => {
     return discount;
 }
 
-const getFeaturesCost = (area: number, formParams: any) => {
-
+const getFeaturesCostPerSquareMeter = (formParams: any) => {
     let additionalCostPerSquareMeter: number = 0;
 
     // finding additional features in form JSON params and then finding their values in the Configuration JSON
@@ -61,7 +69,12 @@ const getFeaturesCost = (area: number, formParams: any) => {
         }
     });
 
-    return additionalCostPerSquareMeter * area;
+    return additionalCostPerSquareMeter;
+}
+
+const getFeaturesCost = (area: number, formParams: any) => {
+
+    return getFeaturesCostPerSquareMeter(formParams) * area;
 }
 
 const getMinimalPrice = (formParams: any) => {
@@ -140,6 +153,35 @@ const packIntoJSON = (formParams: any, priceNetto: number, minimalPriceNetto: nu
         }
     };
 };
+
+const packIntoReversedJSON = (formParams: any, amountOfItemsFittingInMinimalPrice: number, minimalPriceNetto: number): CalculatorResult => {
+    // Filter and transform formParams to create the Dodatkowo array
+
+    const dodatki: Dodatkowo[] = Object.entries(formParams)
+        .filter(([key]) => key !== "krotszy_bok" && key !== "dluzszy_bok" && key !== "ilosc_szt")
+        .map(([key, value]) => ({
+            typ: key,
+            czy_zastosowany: Boolean(value)  // Ensure the value is a boolean
+        }));
+
+    // Create the CalculatorResult object
+    return {
+        typ: jsonProfileObject.type,
+        dodatki: dodatki,
+        cena_netto: minimalPriceNetto,
+        cena_brutto: roundToDecimalPlaces(convertToBrutto(minimalPriceNetto), 2),
+        cena_minimalna_netto: roundToDecimalPlaces(minimalPriceNetto, 2),
+        cena_minimalna_brutto:roundToDecimalPlaces(convertToBrutto(minimalPriceNetto), 2),
+        cena_za_szt_netto: roundToDecimalPlaces(minimalPriceNetto / amountOfItemsFittingInMinimalPrice, 3),
+        ilosc_szt: roundToDecimalPlaces(amountOfItemsFittingInMinimalPrice, 0),
+        wymiary: {
+            krotszy_bok: formParams.krotszy_bok,
+            dluzszy_bok: formParams.dluzszy_bok
+        }
+    };
+};
+
+
 const convertToBrutto = (priceNetto: number): number => {
 
     // assuming that VAT is 23%
@@ -148,7 +190,38 @@ const convertToBrutto = (priceNetto: number): number => {
     return priceNetto / 1.23;
 }
 
+const reversedCalculations = (formParams: any) => {
+    // area includes the margins as 2x jsonObject.marginesy.szerokosc + 2x jsonObject.marginesy.wysokosc!
+
+    // Calculate the area of one sticker
+    let areaOfASticker: number = getAreaOfOneSticker(formParams.dluzszy_bok, formParams.krotszy_bok);
+    console.log('Area of one sticker:', areaOfASticker);
+
+    // Get the project cost
+    let projectCost: number = jsonProfileObject.koszt_projektu;
+    console.log('Project cost:', projectCost);
+
+    // Calculate the square meter cost including features cost
+    let squareMeterCost = getSquareMeterCost(areaOfASticker);
+    console.log('Square meter cost:', squareMeterCost);
+
+    // Get the additional cost per item
+    let additionalCostPerItem = jsonProfileObject.doplata_za_sztuke;
+    console.log('Additional cost per item:', additionalCostPerItem);
+
+    // Calculate the minimal price
+    let minimalPrice: number = getMinimalPrice(formParams);
+    console.log('Minimal price:', minimalPrice);
+
+    // Calculate the amount of items fitting in minimal price
+    let amountOfItemsFittingInMinimalPrice = (minimalPrice - projectCost) / (areaOfASticker * squareMeterCost + additionalCostPerItem);
+    console.log('Amount of items fitting in minimal price:', amountOfItemsFittingInMinimalPrice);
+
+    // Pack the result into JSON
+    return packIntoReversedJSON(formParams, amountOfItemsFittingInMinimalPrice, minimalPrice);
+}
 
 
 
-export {setJSON, calculatePrice, convertToBrutto, getMinimalPrice};
+
+export {setJSON, calculatePrice, convertToBrutto, getMinimalPrice, reversedCalculations};
