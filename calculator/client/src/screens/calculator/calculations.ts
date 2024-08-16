@@ -47,7 +47,7 @@ const getDiscount = (area: number): number => {
     let discount = 0;
 
     jsonProfileObject.rabat.forEach((item) => {
-        if( area >= item.wieksze_rowne) {
+        if( item !== null && area >= item.wieksze_rowne) {
             discount = item.rabat_procenty;
         }
     })
@@ -220,7 +220,6 @@ const reversedCalculations = (formParams: any) => {
     // Pack the result into JSON
     return packIntoReversedJSON(formParams, amountOfItemsFittingInMinimalPrice, minimalPrice);
 }
-
 
 
 

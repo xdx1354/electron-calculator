@@ -121,6 +121,18 @@ const Form: React.FC<Props> = (props) => {
         let filename = formData.type.replaceAll(' ', '_');
         console.log("FORM DATA:", formData);
         const data = { profile: formData };
+
+        // sorting in ascending order with pushing nulls at the end
+        data.profile.rabat.sort((a, b) => {
+            if (a.wieksze_rowne === null && b.wieksze_rowne === null) return 0;
+            if (a.wieksze_rowne === null) return 1;
+            if (b.wieksze_rowne === null) return -1;
+
+            console.log("a: ", a, " and b: ", b, " are not null");
+
+            return a.wieksze_rowne - b.wieksze_rowne; // compare based on the numeric property
+        });
+
         const preparedData = JSON.stringify(data);
 
         console.log("Prepared dataaa: ", preparedData, "\n filename: ", filename);
