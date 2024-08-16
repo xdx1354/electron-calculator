@@ -75,7 +75,7 @@ const ProfilesBrowser: React.FC = () => {
     const handleAddNewProfile = async () => {
 
 
-        const mockData={
+        const mockData= {
             "type": "profil112",
             "cena_za_1m_od_powierzchni_naklejki": [
                 {
