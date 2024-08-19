@@ -149,8 +149,8 @@ function ChooseList() {
 
                 <datalist id="profiles">
                     {configsList.map((file, index) => (
-                        <option key={index} value={file.replace(/\.json$/, "")}>
-                            {file.replace(/\.json$/, "")}
+                        <option key={index} value={file.replace(/\.json$/, "").replaceAll('_', ' ')}>
+                            {file.replace(/\.json$/, "").replaceAll('_', ' ')}
                         </option>
                     ))}
                 </datalist>

@@ -526,7 +526,7 @@ const Form: React.FC<Props> = (props) => {
                         </>
                     ))}
 
-                    <CustomButton text={"+"} function={() => addField("dodatek")}/>
+                    <CustomButton type="button" text={"+"} function={() => addField("dodatek")}/>
 
                 </GridContainer3>
             </EditorSection>
@@ -570,7 +570,7 @@ const Form: React.FC<Props> = (props) => {
 
                 </GridContainer2>
                 <ButtonSection>
-                        <CustomButton text={"+"} function={() => addField("rabat")}/>
+                        <CustomButton type="button" text={"+"} function={() => addField("rabat")}/>
                 </ButtonSection>
             </EditorSection>
 
@@ -591,7 +591,7 @@ const Form: React.FC<Props> = (props) => {
                 </ButtonWrapper>
 
                 <ButtonWrapper>
-                    <CustomButton text="DELETE" function={openDeleteModal}/>
+                    <CustomButton type="button" text="DELETE" function={openDeleteModal}/>
                     <ModalComponent
                         isOpen={isModalDeleteOpen}
                         onRequestClose={closeDeleteModal}
@@ -603,7 +603,7 @@ const Form: React.FC<Props> = (props) => {
                 </ButtonWrapper>
 
                 <ButtonWrapper>
-                    <CustomButton text="EXIT" function={openExitModal}/>
+                    <CustomButton type="button" text="EXIT" function={openExitModal}/>
                     <ModalComponent
                         isOpen={isModalExitOpen}
                         onRequestClose={closeExitModal}
