@@ -1,6 +1,6 @@
 import CustomInput from "../../../components/CustomInput";
 import React, {useEffect, useState} from "react";
-import {Dodatek, Profile, RabatValue} from "../../../types/types";
+import {Dodatek, JsonResponse, Profile, RabatValue} from "../../../types/types";
 import styled from "styled-components";
 import CustomButton from "../../../components/CustomButton";
 import {useNavigate} from "react-router-dom";
@@ -117,10 +117,12 @@ const Form: React.FC<Props> = (props) => {
         // openSaveModal();
     }
 
-    const handleSave = async () => {
-        let filename = formData.type.replaceAll(' ', '_');
-        console.log("FORM DATA:", formData);
-        const data = { profile: formData };
+    /**
+     * This function takes packed into JsonResponse FormData and sorts the 'rabat' based on 'rabat.wieksze_rowne'.
+     * Then all the fields with null values are deleted.
+     * @param data  JsonResponse data containing all the info about profile
+     */
+    const normalizeData = (data : JsonResponse)  => {
 
         // sorting in ascending order with pushing nulls at the end
         data.profile.rabat.sort((a, b) => {
@@ -133,9 +135,17 @@ const Form: React.FC<Props> = (props) => {
             return a.wieksze_rowne - b.wieksze_rowne; // compare based on the numeric property
         });
 
-        const preparedData = JSON.stringify(data);
+        // filtering out all the empty fields
+        data.profile.rabat = data.profile.rabat.filter((a) => {return a.wieksze_rowne !== null && a.rabat_procenty !== null});
 
-        console.log("Prepared dataaa: ", preparedData, "\n filename: ", filename);
+        return data;
+    }
+
+    const handleSave = async () => {
+        let filename = formData.type.replaceAll(' ', '_');
+        const data : JsonResponse = normalizeData({ profile: formData });
+
+        const preparedData = JSON.stringify(data);
 
         try {
             const response = await fetch('http://localhost:4001/save/' + filename, {
